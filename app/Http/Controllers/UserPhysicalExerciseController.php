@@ -41,10 +41,9 @@ class UserPhysicalExerciseController extends Controller
             ->with('physicalExercises')
             ->first()
             ->physicalExercises
-            ->pluck('name', 'id')
-            ->toArray();
+            ->pluck('name', 'id');
 
-        $physicalExercises[0] = 'выберите упражнение';
+        $physicalExercises->prepend('выберите упражнение', 0);
 
         $date = Carbon::parse($date);
 
