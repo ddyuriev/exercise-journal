@@ -2,13 +2,12 @@
 
     @if(in_array(request('device_type'), ['phone', 'tablet']))
         <div class="container">
-            <a href="#" class="logo">EJ</a>
+            <a href="{{route('main.index')}}" class="logo">EJ</a>
 
             <input class="side-menu" type="checkbox" id="side-menu"/>
             <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
 
-{{--            <div class="row row-01 gx-0">--}}
-             <div class="row row-01">
+            <div class="row mobile-menu-block">
 
                 <div class="col">
                     <nav class="nav">

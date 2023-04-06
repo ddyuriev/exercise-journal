@@ -29,11 +29,4 @@
         </div>
     </div>
 
-    <div class="vert">
-        vert
-    </div>
-    <div class="hory">
-        hory
-    </div>
-
 @endsection

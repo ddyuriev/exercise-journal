@@ -9,7 +9,6 @@ use App\Http\Requests\UpdateUserPhysicalExercisesRequest;
 use App\Models\UserPhysicalExercise;
 use App\Services\UserPhysicalExerciseService;
 use Carbon\Carbon;
-use Detection\MobileDetect;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
