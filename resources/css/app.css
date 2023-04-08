@@ -102,6 +102,23 @@ ul {
     color: unset;
 }
 
+@media (max-width: 576px) {
+    .common-pagination {
+        display: none;
+    }
+    .low-width-pagination {
+        display: block;
+    }
+}
+@media (min-width: 576px) {
+    .common-pagination {
+        display: block;
+    }
+    .low-width-pagination {
+        display: none;
+    }
+}
+
 /*end pagination*/
 
 /*begin select2*/
