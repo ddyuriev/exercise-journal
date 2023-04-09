@@ -68,7 +68,7 @@
         </div>
 
         <div class="mt-4 pb-2">
-            {{ $user_physical_exercises->onEachSide(-1)->links()  }}
+            {{ $user_physical_exercises->onEachSide(1)->links()  }}
         </div>
     </div>
 

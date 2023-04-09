@@ -102,6 +102,11 @@ ul {
     color: unset;
 }
 
+.page-link:hover {
+    border-radius: 20%;
+    color: unset;
+}
+
 @media (max-width: 576px) {
     .common-pagination {
         display: none;
