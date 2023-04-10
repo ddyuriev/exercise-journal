@@ -111,14 +111,17 @@ ul {
     .common-pagination {
         display: none;
     }
+
     .low-width-pagination {
         display: block;
     }
 }
+
 @media (min-width: 576px) {
     .common-pagination {
         display: block;
     }
+
     .low-width-pagination {
         display: none;
     }
@@ -239,6 +242,13 @@ input:focus {
 }
 
 /* Header */
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
 .header-mobile .container {
     background-color: var(--light-beige);
     box-shadow: 1px 1px 5px 0 var(--base-beige);
@@ -321,7 +331,7 @@ header .menu a:hover {
 }
 
 .side-menu:checked ~ .mobile-menu-block {
-    max-height: 100%;
+    /*max-height: 100%;*/
 }
 
 /*end test menu*/
