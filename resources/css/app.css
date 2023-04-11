@@ -243,16 +243,12 @@ input:focus {
 
 /* Header */
 
-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
 .header-mobile .container {
     background-color: var(--light-beige);
     box-shadow: 1px 1px 5px 0 var(--base-beige);
-    z-index: 99;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 /* Logo */
@@ -263,17 +259,17 @@ header {
     margin-left: 10px;
 }
 
-header .menu a {
+.header-mobile .menu a {
     display: block;
     padding: 1rem;
     color: var(--dark-gray);
 }
 
-header a:hover {
+.header-mobile a:hover {
     color: var(--dark-gray);
 }
 
-header .menu a:hover {
+.header-mobile .menu a:hover {
     background-color: var(--base-beige);
 }
 
