@@ -10,7 +10,8 @@ body {
 }
 
 :root {
-    --header: 0vh;
+    /*--header: 0vh;*/
+    --header: 6vh;
 }
 
 /*only mobile devices*/
@@ -315,7 +316,6 @@ input:focus {
     max-height: 100%;
 }
 
-/*begin test menu*/
 .mobile-menu-block {
     width: 100%;
     background-color: var(--light-beige);
@@ -329,8 +329,6 @@ input:focus {
 .side-menu:checked ~ .mobile-menu-block {
     /*max-height: 100%;*/
 }
-
-/*end test menu*/
 
 .side-menu:checked ~ .hamb .hamb-line {
     background: transparent;
@@ -353,6 +351,21 @@ body:has(.side-menu:checked) {
 
 /*end mobile header-------------------------------------------------------*/
 
+/*begin desktop header*/
+
+.header-desktop {
+    /*min-height: 8vh;*/
+    z-index: 200;
+    position: relative;
+}
+
+.header-desktop .container {
+    background-color: #fff;
+    min-height: 6vh;
+    box-shadow: 0 2px 0 0 rgba(0,0,0,.06);
+}
+
+/*end desktop header-------------------------------------------------------*/
 
 /*begin settings page*/
 .menu a {

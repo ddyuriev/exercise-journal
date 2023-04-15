@@ -1,5 +1,26 @@
 <header>
 
+    @if(request('device_type') == 'computer')
+        <div class="header-desktop">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-2">
+                        -=Главная=-
+                    </div>
+                    <div class="col-8">
+                    </div>
+                    <div class="col-2">
+                        -=Профиль=-
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    @endif
+
     @if(in_array(request('device_type'), ['phone', 'tablet']))
         <div class="header-mobile">
             <div class="container">
