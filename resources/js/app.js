@@ -23,7 +23,7 @@ function createUserPhysicalExercise(value) {
     //url params
     const queryString = window.location.search;
     formData.append('queryString', queryString);
-    formData.append('date',  window.location.pathname.replace("/day/", ""));
+    formData.append('date', window.location.pathname.replace("/day/", ""));
 
     fetch('/day/user-physical-exercises', {
         method: 'POST',
@@ -37,7 +37,7 @@ function createUserPhysicalExercise(value) {
     }).then(data => {
         console.log(data);
         if (data.is_success) {
-            if(data.is_need_reload){
+            if (data.is_need_reload) {
                 location.reload();
             } else {
                 document.getElementById('intradaily-exercises-body').remove();
@@ -269,7 +269,7 @@ function deleteUserPhysicalExercise() {
                 if (data.is_success) {
                     // console.log('draw');
 
-                    if(data.is_need_reload){
+                    if (data.is_need_reload) {
                         location.reload();
                     } else {
                         document.getElementById('intradaily-exercises-body').remove();
@@ -370,3 +370,35 @@ function drawUserPhysicalExerciseTable(data) {
         intradailyExercisesBody.insertAdjacentElement('beforeend', element);
     }
 }
+
+
+//profile block toggle (PC)
+
+let isProfileVisible = 0;
+
+window.addEventListener('click', function (event) {
+    if (!document.getElementById('profile-icon').contains(event.target) && isProfileVisible) {
+        document.getElementById("pc-profile-widget").style.cssText += `
+animation: h1de 0.3s forwards;
+            `;
+        setTimeout(function () {
+            document.getElementById("pc-profile-widget").style.cssText += `
+visibility: hidden;
+            `;
+        }, 300);
+
+        isProfileVisible = 0;
+    }
+});
+
+document.getElementById('profile-icon')?.addEventListener('click', function (event) {
+    console.log(event.target.id);
+
+    if (isProfileVisible === 0) {
+        document.getElementById("pc-profile-widget").style.cssText = `
+visibility: visible;
+animation: show 0.8s forwards;
+        `;
+        isProfileVisible = 1;
+    }
+});
