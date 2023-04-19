@@ -40,6 +40,16 @@ body {
     border: 1px solid #e3b04b !important;
     color: #fff !important;
 }
+/*.btn:hover {*/
+/*    color: var(--bs-btn-hover-color);*/
+/*    background-color: var(--bs-btn-hover-bg);*/
+/*    border-color: var(--bs-btn-hover-border-color);*/
+/*}*/
+
+.btn-primary:hover {
+    background-color: #d79d29 !important;
+    border-color: #d79d29 !important;
+}
 
 /*Кнопка логин*/
 .container-right .btn.btn-primary {
