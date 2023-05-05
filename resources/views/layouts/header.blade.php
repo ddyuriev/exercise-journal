@@ -8,19 +8,18 @@
 
                     <div class="col-1">
                         @if (request('device_type') == 'computer')
-                            @auth
-                                <div class="container-right p-4 mb-4">
-                                    <div class="block-login">
-                                        <div class="row mt-0">
-                                            <div class="col main-navigation text-center">
-                                                <a class="nav-link text-center" href="{{route('main.index')}}">
-                                                    <i class="bi bi-house-door"></i>
-                                                </a>
-                                            </div>
+
+                            <div class="container-right p-4 mb-3">
+                                <div class="block-login">
+                                    <div class="row mt-0">
+                                        <div class="col main-navigation text-center">
+                                            <a class="nav-link text-center" href="{{route('main.index')}}">
+                                                <i class="bi bi-house-door"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
-                            @endauth
+                            </div>
                         @endif
                     </div>
                     <div class="col-9">
@@ -28,7 +27,7 @@
                     <div class="col-2">
                         @if (request('device_type') == 'computer')
                             @auth
-                                <div class="container-right p-4 mb-4">
+                                <div class="container-right p-4 mb-3">
                                     <div class="block-login">
                                         <div class="row mt-0">
                                             <div class="col main-navigation text-center">
@@ -50,7 +49,7 @@
                         @if (request('device_type') == 'computer')
                             <div class="col">
                                 @auth
-                                    <div class="container-right p-4 mb-4">
+                                    <div class="container-right p-4 mb-3">
                                         <div class="block-login">
                                             <div class="row mt-0">
                                                 <div class="col main-navigation">

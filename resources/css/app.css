@@ -40,6 +40,7 @@ body {
     border: 1px solid #e3b04b !important;
     color: #fff !important;
 }
+
 /*.btn:hover {*/
 /*    color: var(--bs-btn-hover-color);*/
 /*    background-color: var(--bs-btn-hover-bg);*/
@@ -441,7 +442,6 @@ body:has(.side-menu:checked) {
     }
 }
 
-
 @keyframes h1de {
     0% {
         opacity: 1;
@@ -454,4 +454,17 @@ body:has(.side-menu:checked) {
 
 .header-desktop .container {
     position: relative;
+}
+
+/*registration form*/
+@media (min-width: 1200px) {
+    .w50-button {
+        max-width: 40%;
+    }
+
+    .registration .w50-button {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
 }

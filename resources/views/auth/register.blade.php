@@ -27,7 +27,7 @@
                         </div>
 
                         <div class="mb-3 text-left">
-                            <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                            <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
                         </div>
                     </form>
                 </div>
