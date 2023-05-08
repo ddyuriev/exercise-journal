@@ -16,7 +16,7 @@ use App\Http\Controllers\UserPhysicalExerciseController;
 |
 */
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [MainController::class, 'index'])->name('main.index');
     Route::post('/update', [MainController::class, 'update'])->name('main.update');
 
@@ -36,3 +36,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/day/user-physical-exercises/{id}', [UserPhysicalExerciseController::class, 'update'])->name('user-physical-exercises.update');
     Route::delete('/day/user-physical-exercises/{id}', [UserPhysicalExerciseController::class, 'destroy'])->name('user-physical-exercises.destroy');
 });
+
+Route::get('/register-retry', function(){
+    Auth::logout();
+    return redirect('/');
+ })->name('register.retry');
