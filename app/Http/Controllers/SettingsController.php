@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\PhysicalExercise;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,16 +32,9 @@ class SettingsController extends Controller
      */
     public function physicalExercisesIndex(Request $request)
     {
-        $physicalExercises = PhysicalExercise
-            ::withCount(['users' => function ($query) {
-                $query->where('users.id', Auth::id());
-            }])
-            ->orderByDesc('users_count')
-            ->orderBy('updated_at')
-            ->paginate($this->perPage);
-
+        $data = $request->all();
         return view('settings.physicalExercisesIndex', [
-            'physical_exercises' => $physicalExercises,
+            'physical_exercises' => $this->searchQuery($data),
         ]);
     }
 
@@ -54,7 +46,6 @@ class SettingsController extends Controller
     public function physicalExercisesToggle(Request $request)
     {
         $data = $request->all();
-
         $userPhysicalExercises = Auth::user()->physicalExercises()
             ->pluck('user_id', 'physical_exercise_id')
             ->toArray();
@@ -64,14 +55,8 @@ class SettingsController extends Controller
             ->pluck('user_id', 'physical_exercise_id')
             ->toArray();
 
-        $physicalExercisesQuery = PhysicalExercise
-            ::withCount(['users' => function ($query) {
-                $query->where('users.id', Auth::id());
-            }])
-            ->orderByDesc('users_count')
-            ->orderBy('updated_at');
-
         $page = 1;
+        $output = [];
         if (!empty($data['queryString']) && !empty($queryStringParsed = parse_url($data['queryString']))) {
             if (!empty($queryStringParsed['query'])) {
                 parse_str($queryStringParsed['query'], $output);
@@ -80,8 +65,7 @@ class SettingsController extends Controller
                 }
             }
         }
-        $physicalExercises = $physicalExercisesQuery->paginate($this->perPage, ['*'], 'page', $page);
-
+        $physicalExercises = $this->searchQuery($output, $page);
         return [
             'is_success' => true,
             'items' => [
@@ -89,5 +73,78 @@ class SettingsController extends Controller
                 'physical_exercises' => $physicalExercises,
             ]
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function search(Request $request)
+    {
+        $data = $request->all();
+
+        $physicalExercises = $this->searchQuery($data, 1);
+        $paginationLinks = (string)$physicalExercises->withQueryString()->onEachSide(1)->links();
+        $paginationLinks = str_replace("/search", "", $paginationLinks);
+
+
+        if ($paginationLinks) {
+            $dom = new \DOMDocument();
+            libxml_use_internal_errors(true);
+            $dom->loadHTML($paginationLinks);
+            $xpath = new \DOMXPath($dom);
+            $elements = $xpath->query('//div');
+            foreach ($elements as $el) {
+                $el->parentNode->removeChild($el);
+            }
+            $pagination = $dom->saveHTML();
+        } else {
+            $pagination = '';
+        }
+        return [
+            'is_success' => true,
+            'items' => [
+                'physical_exercises' => $physicalExercises,
+            ],
+            'pagination' => $pagination
+        ];
+    }
+
+    /**
+     * @param array $searchData
+     * @param int|null $pageNumber
+     * @return mixed
+     */
+    public function searchQuery(array $searchData, int $pageNumber = null)
+    {
+        $userId = Auth::id();
+
+        $physicalExercises = PhysicalExercise::select(\DB::raw(
+            'id, name, sub_sel.user_id as active, sub_sel.updated_at'
+        ))
+            ->leftJoin(\DB::raw(
+                <<<STR
+            (SELECT *
+            FROM `physical_exercise_user` pe_u
+            WHERE pe_u.user_id = {$userId} ) AS sub_sel
+STR
+            ),
+                function ($join) {
+                    $join->on('id', '=', 'sub_sel.physical_exercise_id');
+                })
+            ->orderBy('sub_sel.user_id', 'DESC')
+            ->orderBy('sub_sel.updated_at')
+            ->orderBy('id');
+
+        if (!empty($searchData['name'])) {
+            $physicalExercises->where('name', 'like', "%{$searchData['name']}%");
+        }
+
+        if ($pageNumber) {
+            $result = $physicalExercises->paginate($this->perPage, ['*'], 'page', $pageNumber);
+        } else {
+            $result = $physicalExercises->paginate($this->perPage);
+        }
+        return $result;
     }
 }

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('physical_exercise_id');
             $table->primary(['user_id', 'physical_exercise_id']);
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

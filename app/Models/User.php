@@ -42,7 +42,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function physicalExercises() {
-        return $this->belongsToMany(PhysicalExercise::class);
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function physicalExercises()
+    {
+        return $this->belongsToMany(PhysicalExercise::class)
+            ->withPivot('updated_at');
     }
 }

@@ -29,8 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/settings/physical-exercises', [SettingsController::class, 'physicalExercisesIndex'])->name('settings.physical-exercises.index');
     Route::post('/settings/physical-exercises/toggle', [SettingsController::class, 'physicalExercisesToggle'])->name('settings.physical-exercises.toggle');
-
-
+    Route::get('/settings/physical-exercises/search', [SettingsController::class, 'search'])->name('settings.physical-exercises.search');
     Route::get('/day/{date}', [UserPhysicalExerciseController::class, 'view'])->name('user-physical-exercises.view');
     Route::post('/day/user-physical-exercises', [UserPhysicalExerciseController::class, 'create'])->name('user-physical-exercises.create');
     Route::put('/day/user-physical-exercises/{id}', [UserPhysicalExerciseController::class, 'update'])->name('user-physical-exercises.update');

@@ -96,6 +96,10 @@ ul {
     color: rgba(128, 128, 128, 0.8);
 }
 
+.form-control:focus {
+    box-shadow: 0 0 0 0.20rem rgba(14, 170, 32, 0.5);
+}
+
 
 /*begin pagination*/
 .pagination {
@@ -468,3 +472,5 @@ body:has(.side-menu:checked) {
         bottom: 0;
     }
 }
+
+

@@ -6,6 +6,7 @@ use App\Helpers\StringHelper;
 use App\Http\Requests\CreateUserPhysicalExercisesRequest;
 use App\Http\Requests\DestroyUserPhysicalExercisesRequest;
 use App\Http\Requests\UpdateUserPhysicalExercisesRequest;
+use App\Models\User;
 use App\Models\UserPhysicalExercise;
 use App\Services\UserPhysicalExerciseService;
 use Carbon\Carbon;
@@ -37,7 +38,7 @@ class UserPhysicalExerciseController extends Controller
      */
     public function view($date, Request $request)
     {
-        $physicalExercises = Auth::user()
+        $physicalExercises = User::where('id', Auth::id())
             ->with('physicalExercises')
             ->first()
             ->physicalExercises

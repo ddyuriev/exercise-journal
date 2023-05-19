@@ -49,68 +49,10 @@ function createUserPhysicalExercise(value) {
     });
 }
 
-// document.getElementsByClassName('calendar-table-body')[0]?.addEventListener('click', function (event) {
-//     console.log(event.target.id);
-//
-//     // document.getElementsByClassName('calendar-table')[0].style.display = 'none';
-//
-//     document.getElementById('calendar').style.display = 'none';
-//     document.getElementById('calendar-details').style.display = 'block';
-//
-// });
-
-
-// document.getElementById('calendar-details')?.addEventListener('click', function (event) {
-//     document.getElementById('calendar').style.display = 'block';
-//     document.getElementById('calendar-details').style.display = 'none';
-//
-//     const formData = new FormData();
-//     formData.append('111', 112);
-//
-//     fetch('/update', {
-//         method: 'POST',
-//         body: formData,
-//         headers: {
-//             "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-//         }
-//     }).then(response => {
-//         return response.json();
-//     }).then(data => {
-//         console.log(data);
-//
-//         if (data.items) {
-//         }
-//     });
-// });
-
-
-// document.getElementsByClassName('btn-confirm-recalculate')[0]
-//     .addEventListener('click', function (event) {
-//
-//         event.preventDefault();
-//         const formData = new FormData();
-//         formData.append('111', 112);
-//
-//         fetch('/update', {
-//             method: 'POST',
-//             body: formData,
-//             headers: {
-//                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-//             }
-//         }).then(response => {
-//             return response.json();
-//         }).then(data => {
-//             console.log(data);
-//             if (data.items) {
-//             }
-//         });
-//     })
-
 
 //settings
 
-
-function settingsSelectPhysicalExercisesEL() {
+function settingsTogglePhysicalExercisesEL() {
     let formPhysicalExercisesToggles = document.getElementsByClassName('form-physical-exercises-toggle');
     for (const [key, formPhysicalExercisesToggle] of Object.entries(formPhysicalExercisesToggles)) {
         formPhysicalExercisesToggle.addEventListener('submit', function (event) {
@@ -139,27 +81,24 @@ function settingsSelectPhysicalExercisesEL() {
                 if (data.is_success) {
                     //tboby
                     document.querySelector('#physical-exercises-settings table tbody').remove();
-                    tableSelectPhysicalExercisesCreate(data);
-                    settingsSelectPhysicalExercisesEL();
-
-
-                    // window.history.pushState("Details", "Title", "settings?page=" + data.items.physical_exercises.current_page);
-                    window.history.pushState("Details", "Title", "physical-exercises?page=" + data.items.physical_exercises.current_page);
+                    drawSelectPhysicalExercisesTable(data.items.physical_exercises.data);
+                    settingsTogglePhysicalExercisesEL();
+                    window.history.pushState('', '', 'physical-exercises' + queryString);
                 }
             });
         })
     }
 }
 
-settingsSelectPhysicalExercisesEL();
+settingsTogglePhysicalExercisesEL();
 
-function tableSelectPhysicalExercisesCreate(data) {
+function drawSelectPhysicalExercisesTable(data) {
     const parent = document.querySelector('#physical-exercises-settings table');
     let tb = parent.createTBody();
-    for (const [key, datum] of Object.entries(data.items.physical_exercises.data)) {
+    for (const [key, datum] of Object.entries(data)) {
         const tr = tb.insertRow();
         tr.setAttribute("id", "tr-" + datum.id);
-        if (datum.users_count !== 1) {
+        if (!datum.active) {
             tr.classList.add("physical-exercises-unselected");
         }
 
@@ -173,7 +112,7 @@ function tableSelectPhysicalExercisesCreate(data) {
         td.appendChild(document.createTextNode(''));
         td.classList.add("action-icons");
         td.classList.add("text-center");
-        let togglePosition = datum.users_count === 1 ? 'bi-toggle2-on' : 'bi-toggle2-off';
+        let togglePosition = datum.active ? 'bi-toggle2-on' : 'bi-toggle2-off';
         td.innerHTML = `
             <form method="POST" id="pe-toggle-${datum.id}" class="form-physical-exercises-toggle" action="/settings/physical-exercises/toggle">
                 <button class="btn btn-grow btn-confirm-recalculate">
@@ -184,6 +123,33 @@ function tableSelectPhysicalExercisesCreate(data) {
     }
     parent.appendChild(tb);
 }
+
+let physicalExercisesSettingsSearchInput = document.querySelector('#physical-exercises-settings .search-input');
+let searchPrev = '';
+physicalExercisesSettingsSearchInput?.addEventListener('keyup', (event) => {
+    let search = physicalExercisesSettingsSearchInput.value;
+    if ((searchPrev !== search) && ((search === '') || (search.length > 1))) {
+        searchPrev = search;
+        fetch('/settings/physical-exercises/search?' + 'name=' + search, {
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            console.log(data);
+            if (data.is_success) {
+                document.querySelector('#physical-exercises-settings table tbody').remove();
+                drawSelectPhysicalExercisesTable(data.items.physical_exercises.data);
+                settingsTogglePhysicalExercisesEL();
+                window.history.pushState("Details", "Title", "physical-exercises?name=" + search);
+                document.querySelector('.common-pagination').innerHTML = data.pagination;
+            }
+        });
+    }
+});
 
 
 //Таблица выполненных упражнений внутри дня
