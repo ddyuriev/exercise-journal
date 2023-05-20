@@ -17,9 +17,12 @@ class Device
      */
     public function handle(Request $request, Closure $next)
     {
-        $detect = new MobileDetect();
-        $deviceType = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'phone') : 'computer');
-        $request->merge(['device_type' => $deviceType]);
+        if ($request->isMethod('get'))
+        {
+            $detect = new MobileDetect();
+            $deviceType = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'phone') : 'computer');
+            $request->merge(['device_type' => $deviceType]);
+        }
 
         return $next($request);
     }
