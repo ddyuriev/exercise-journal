@@ -12,21 +12,20 @@
             <div class="col-12">
                 <select id="select-physical_exercise" name="physical_exercises[]" class="form-control select2">
                     @foreach($physical_exercises as $k => $v)
-                        <option value="{{$k}}"
-                                @if(in_array($k, request('provider') ?? [])) selected @endif>{{$v}}</option>
+                        <option value="{{$k}}">{{$v}}</option>
                     @endforeach
                 </select>
             </div>
         </div>
 
 
-        <div id="intradaily-exercises" class="mt-4">
+        <div id="intradaily-exercises" class="intradaily-exercises-common mt-4">
 
             <div class="row mb-2">
-                <div class="text-start sort-field">#</div>
-                <div class="col-3 text-start">упраж&shyнение</div>
+                <div class="col-05-cstm text-start">#</div>
+                <div class="col-35-cstm text-start">упраж&shyнение</div>
                 <div class="col-2 text-start">повто&shyрений</div>
-                <div class="col text-start"><span class="">комментарий</span></div>
+                <div class="col-5 text-start"><span class="">комментарий</span></div>
                 <div class="col-1"></div>
             </div>
 
@@ -34,10 +33,10 @@
 
                 @foreach($user_physical_exercises as $user_physical_exercise)
                     <div draggable="true" class="row block-body">
-                        <div class="text-start sort-field physical-exercise-{{$user_physical_exercise['id']}}">
+                        <div class="col-05-cstm text-start physical-exercise-{{$user_physical_exercise['id']}}">
                             {{$user_physical_exercise['intraday_key']}}
                         </div>
-                        <div class="col-3 text-start physical-exercise-{{$user_physical_exercise['id']}}">
+                        <div class="col-35-cstm text-start physical-exercise-{{$user_physical_exercise['id']}}">
                             <span>{{$user_physical_exercise['physical_exercises']['name']}}</span>
                         </div>
                         <div class="col-2">
@@ -47,7 +46,7 @@
                                        class="item-count" autocomplete="none">
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-5">
                             <div class="input-parent border-bottom">
                                 <input type="text" value="{{ $user_physical_exercise['comment'] }}"
                                        name="pe-comment-{{$user_physical_exercise['id']}}"
@@ -56,13 +55,56 @@
                             </div>
                         </div>
                         <div class="col-1 delete-control">
-                            <div class="w-50 h5" style="margin-left: -5%">
-                                <i id="i-element-{{$user_physical_exercise['id']}}" class="bi bi-x"></i>
+                            <div class="h5 position-relative">
+                                <i id="i-element-{{$user_physical_exercise['id']}}"
+                                   class="bi bi-x position-absolute end-0"></i>
                             </div>
                         </div>
                     </div>
                 @endforeach
 
+            </div>
+
+        </div>
+
+
+        <div id="intradaily-exercises-low-res" class="intradaily-exercises-common mt-4">
+
+            <div id="intradaily-exercises-low-res-body">
+
+                @foreach($user_physical_exercises as $user_physical_exercise)
+                    <div draggable="true" class="row block-body mt-4">
+                        <div class="col-5">
+                            <div class="text-start physical-exercise-{{$user_physical_exercise['id']}}">
+                                {{$user_physical_exercise['intraday_key']}}
+                            </div>
+                            <div class="text-start physical-exercise-{{$user_physical_exercise['id']}}">
+                                <span>{{$user_physical_exercise['physical_exercises']['name']}}</span>
+                            </div>
+                        </div>
+
+                        <div class="col-5">
+                            <div class="input-parent border-bottom">
+                                <input type="text" value="{{ $user_physical_exercise['count'] }}"
+                                       name="pe-count-{{$user_physical_exercise['id']}}"
+                                       class="item-count" autocomplete="none">
+                            </div>
+                            <div class="input-parent border-bottom">
+                                <input type="text" value="{{ $user_physical_exercise['comment'] }}"
+                                       name="pe-comment-{{$user_physical_exercise['id']}}"
+                                       class="item-comment"
+                                       autocomplete="none">
+                            </div>
+                        </div>
+
+                        <div class="col-2">
+                            <div class="h5 delete-control">
+                                <i id="i-element-{{$user_physical_exercise['id']}}"
+                                   class="bi bi-x position-absolute"></i>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
 
         </div>

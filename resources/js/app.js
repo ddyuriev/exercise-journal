@@ -273,13 +273,13 @@ function drawUserPhysicalExerciseTable(data) {
         element.classList.add("block-body");
 
         let subelementNumber = document.createElement('div');
+        subelementNumber.classList.add("col-05-cstm");
         subelementNumber.classList.add("text-start");
-        subelementNumber.classList.add("sort-field");
         subelementNumber.classList.add("physical-exercise-" + datum.id);
         subelementNumber.innerHTML = datum.intraday_key;
 
         let subelementName = document.createElement('div');
-        subelementName.classList.add("col-3");
+        subelementName.classList.add("col-35-cstm");
         subelementName.classList.add("text-start");
         subelementName.classList.add("physical-exercise-" + datum.id);
         let subelementNameSpan = document.createElement('span');
@@ -301,7 +301,7 @@ function drawUserPhysicalExerciseTable(data) {
         subelementCountDiv.insertAdjacentElement('afterbegin', subelementCountInput);
 
         let subelementComment = document.createElement('div');
-        subelementComment.classList.add("col");
+        subelementComment.classList.add("col-5");
         let subelementCommentDiv = document.createElement('div');
         subelementCommentDiv.classList.add("input-parent");
         subelementCommentDiv.classList.add("border-bottom");
@@ -318,12 +318,15 @@ function drawUserPhysicalExerciseTable(data) {
         subelementControl.classList.add("col-1");
         subelementControl.classList.add("delete-control");
         let subelementControlDiv = document.createElement('div');
-        subelementControlDiv.classList.add("w-50");
+        subelementControlDiv.classList.add("h5");
+        subelementControlDiv.classList.add("position-relative");
         subelementControl.insertAdjacentElement('afterbegin', subelementControlDiv);
         let subelemenControlI = document.createElement('i');
         subelemenControlI.id = datum.id;
         subelemenControlI.classList.add("bi");
         subelemenControlI.classList.add("bi-x");
+        subelemenControlI.classList.add("position-absolute");
+        subelemenControlI.classList.add("end-0");
         subelementControlDiv.insertAdjacentElement('afterbegin', subelemenControlI);
 
 
@@ -343,7 +346,8 @@ function drawUserPhysicalExerciseTable(data) {
 let isProfileVisible = 0;
 
 window.addEventListener('click', function (event) {
-    if (!document.getElementById('profile-icon').contains(event.target) && isProfileVisible) {
+    let profileIcon = document.getElementById('profile-icon');
+    if (profileIcon && !profileIcon.contains(event.target) && isProfileVisible) {
         document.getElementById("pc-profile-widget").style.cssText += `
 animation: h1de 0.3s forwards;
             `;

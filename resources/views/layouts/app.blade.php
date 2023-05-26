@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css','resources/scss/app.scss', 'resources/js/app.js'])
 </head>
 
-<body>
+<body class="@if (request('device_type') == 'computer') type-computer @else type-mobile @endif">
 
 @include('layouts.header')
 
