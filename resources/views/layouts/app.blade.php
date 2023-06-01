@@ -21,14 +21,14 @@
 <div class="container body-container pt-4">
     <div class="@if (request('device_type') == 'computer') row @endif">
         @if (request('device_type') == 'computer')
-            <div class="col-1">
+            <div class="col-1 col-left">
             </div>
         @endif
-        <div class="@if(request('device_type') == 'computer') col-10 @else pt-2 pb-4 @endif ">
+        <div class="@if(request('device_type') == 'computer') col-10-cstm @else pt-2 pb-4 @endif ">
             @yield('content')
         </div>
         @if (request('device_type') == 'computer')
-            <div class="col-1">
+            <div class="col-1 col-right">
             </div>
         @endif
     </div>

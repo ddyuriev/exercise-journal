@@ -289,7 +289,7 @@ function drawUserPhysicalExerciseTable(data) {
         let subelementCount = document.createElement('div');
         subelementCount.classList.add("col-2");
         let subelementCountDiv = document.createElement('div');
-        subelementCountDiv.classList.add("input-parent");
+        subelementCountDiv.classList.add("border-bottom-hover");
         subelementCountDiv.classList.add("border-bottom");
         subelementCount.insertAdjacentElement('afterbegin', subelementCountDiv);
         let subelementCountInput = document.createElement('input');
@@ -303,7 +303,7 @@ function drawUserPhysicalExerciseTable(data) {
         let subelementComment = document.createElement('div');
         subelementComment.classList.add("col-5");
         let subelementCommentDiv = document.createElement('div');
-        subelementCommentDiv.classList.add("input-parent");
+        subelementCommentDiv.classList.add("border-bottom-hover");
         subelementCommentDiv.classList.add("border-bottom");
         subelementComment.insertAdjacentElement('afterbegin', subelementCommentDiv);
         let subelemenCommentInput = document.createElement('input');
@@ -311,6 +311,7 @@ function drawUserPhysicalExerciseTable(data) {
         subelemenCommentInput.type = "text";
         subelemenCommentInput.setAttribute('autocomplete', "none");
         subelemenCommentInput.setAttribute('name', "pe-comment-" + datum.id);
+        subelemenCommentInput.setAttribute('title', datum.comment);
         subelemenCommentInput.value = datum.comment;
         subelementCommentDiv.insertAdjacentElement('afterbegin', subelemenCommentInput);
 

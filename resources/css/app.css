@@ -29,7 +29,7 @@ body {
 .type-mobile #intradaily-exercises-body .block-body {
     margin-top: 0.25rem !important;
 
-    display:flex;
+    display: flex;
 }
 
 .body-container {
@@ -41,7 +41,7 @@ body {
     border-radius: 8px;
 }
 
-/*Кнопка логин*/
+/*login button*/
 .btn.btn-primary {
     background: #e3b04b !important;
     border: 1px solid #e3b04b !important;
@@ -74,10 +74,24 @@ ul {
     flex: 0 0 auto;
     width: 4.166666666%;
 }
+
 .col-35-cstm {
     flex: 0 0 auto;
     width: 29.16666666%;
 }
+
+input:focus {
+    outline: none;
+}
+
+.color-gray{
+    color: gray;
+}
+
+.color-goldenrod{
+    color: goldenrod;
+}
+
 /*end common*/
 
 
@@ -172,11 +186,9 @@ ul {
     width: 50% !important;
 }
 
-/**/
 .select2-container--bootstrap-5 {
     width: 100% !important;
 }
-/**/
 
 .select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field:focus {
     border-color: #0aac0a;
@@ -196,21 +208,28 @@ ul {
 
 /*begin intradaily table*/
 
+/*resolution from 0 to x*/
+@media screen and (max-width: 768px) {
+    #intradaily-exercises, .col-left, .col-right {
+        display: none;
+    }
 
-@media (max-width: 768px) {
-    #intradaily-exercises{
-        display:none;
+    .col-10-cstm {
+        flex: 0 0 auto;
+        width: 100%;
     }
 }
 
-@media not (max-width: 768px) {
-    #intradaily-exercises-low-res{
-        display:none;
+/*resolution from x to MAX*/
+@media screen and (min-width: 768.1px){
+    #intradaily-exercises-low-res {
+        display: none;
     }
-}
 
-input:focus {
-    outline: none;
+    .col-10-cstm {
+        flex: 0 0 auto;
+        width: 83.33333333%;
+    }
 }
 
 .intradaily-exercises-common .block-body {
@@ -224,6 +243,11 @@ input:focus {
     line-height: normal;
 }
 
+/* span contenteditable no border*/
+.intradaily-exercises-common span:focus {
+    outline: none;
+}
+
 .intradaily-exercises-common .delete-control i {
     color: gray;
 }
@@ -233,11 +257,17 @@ input:focus {
     cursor: pointer;
 }
 
-/*наведение на редактируемое поле таблицы*/
-.intradaily-exercises-common .input-parent:hover {
+/*hover on editable table field*/
+.intradaily-exercises-common .border-bottom-hover:hover {
     border-bottom-color: green !important;
     cursor: text;
 }
+
+.intradaily-exercises-common input:hover:after {
+    content: attr(data-title);
+    display: block;
+}
+
 
 #intradaily-exercises .row {
     min-height: 3vh;
@@ -252,26 +282,32 @@ input:focus {
     overflow: hidden;
 }
 
-#intradaily-exercises-low-res .block-body div[class^='col'] div {
-    margin-top: 0.6rem;
-}
 
-/*.top-40-cstm {*/
-/*    top: 40% !important;*/
-/*}*/
 
 #intradaily-exercises-low-res .block-body {
-    /*position: relative;*/
-    display:flex;
+    display: flex;
 }
 
-#intradaily-exercises-low-res .block-body .col-2{
+#intradaily-exercises-low-res .delete-control i, #intradaily-exercises-low-res .ie-line-balancer {
+    font-size: 1.25rem;
+}
+
+#intradaily-exercises-low-res .header-images {
+    width: 100%;
+    height: 100%;
+}
+
+#intradaily-exercises-low-res .header-images div {
     position: relative;
+    width: 80%;
+    height: 100%;
+    margin-left: 10%;
 }
 
-#intradaily-exercises-low-res .delete-control i {
-    top: 40% !important;
-    left: 40% !important;
+#intradaily-exercises-low-res .header-images img {
+    width: 100%;
+    position: absolute;
+    left: 0;
 }
 
 /*end intradaily table*/
