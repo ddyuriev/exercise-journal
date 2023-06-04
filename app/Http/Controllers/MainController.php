@@ -20,12 +20,17 @@ class MainController extends Controller
 
     public function index(Request $request)
     {
-        $now = Carbon::now()->locale('ru_RU');
+        $request->validate([
+            'year-month' => 'date_format:Y-m',
+        ]);
+        $inputDate = $request->input('year-month');
+        $date = $inputDate ? Carbon::parse($inputDate)->locale('ru_RU') : Carbon::now()->locale('ru_RU');
         return view('main.index', [
-            'year' => $now->year,
-            'month_name' => $now->monthName,
-            'day' => $now->format('d'),
-            'calendar' => $this->calendarService->getCalendar()
+            'year' => $date->year,
+            'month' => $date->format('m'),
+            'month_name' => $date->monthName,
+            'day' => $date->format('d'),
+            'calendar' => $this->calendarService->getCalendar($date)
         ]);
     }
 }

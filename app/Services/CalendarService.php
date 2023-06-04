@@ -10,22 +10,21 @@ class CalendarService
     /**
      * @return array
      */
-    public function getCalendar(): array
+    public function getCalendar($date): array
     {
-        $now = Carbon::now()->locale('ru_RU');
-        $currentMonth = $now->month;
-        $day = $now->day;
-        $weeksInMonth = $this->crossedWeeksCount();
-
-        $date = Carbon::now()->firstOfMonth()->startOfWeek();
+        $now = Carbon::now();
+        $currentMonth = $date->month;
+        $day = $now->month == $date->month && $now->year == $date->year ? $now->day : 0;
+        $weeksInMonth = $this->crossedWeeksCount($date);
+        $beginDate = $date->firstOfMonth()->startOfWeek();
         $resultAux = [];
         for ($i = 0; $i <= ($weeksInMonth) * 7 - 1; $i++) {
-            $dateAux = $date->clone();
+            $beginDateAux = $beginDate->clone();
             array_push($resultAux, [
-                'date' => $dateAux->addDays($i)->day,
-                'is_current_date' => $currentMonth === $dateAux->month && $day === $dateAux->day,
-                'month' => $dateAux->format('m'),
-                'is_this_month' => $currentMonth === $dateAux->month
+                'date' => $beginDateAux->addDays($i)->day,
+                'is_current_date' => $currentMonth === $beginDateAux->month && $day === $beginDateAux->day,
+                'month' => $beginDateAux->format('m'),
+                'is_this_month' => $currentMonth === $beginDateAux->month
             ]);
         }
 
@@ -54,10 +53,10 @@ class CalendarService
     /**
      * @return int
      */
-    private function crossedWeeksCount(): int
+    private function crossedWeeksCount($date): int
     {
-        $firstWeekOfMonthDate = Carbon::now()->startOfMonth()->startOfWeek();
-        $lastWeekOfMonthDate = Carbon::now()->endOfMonth()->endOfWeek();
+        $firstWeekOfMonthDate = $date->clone()->startOfMonth()->startOfWeek();
+        $lastWeekOfMonthDate = $date->clone()->endOfMonth()->endOfWeek();
         return ceil($lastWeekOfMonthDate->diffInDays($firstWeekOfMonthDate) / 7);
     }
 }

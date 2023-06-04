@@ -8,14 +8,16 @@ import select2 from 'select2';
 select2();
 
 import {TextareaAutoSize} from 'textarea-autosize'
-let wrapper = [];
 
+let wrapper = [];
 let textareasPET = document.querySelectorAll('textarea.js-auto-size');
-for (const [key, textareaPET] of Object.entries(textareasPET)) {
-    wrapper.push(new TextareaAutoSize(textareaPET));
+if (Object.keys(textareasPET).length) {
+    for (const [key, textareaPET] of Object.entries(textareasPET)) {
+        wrapper.push(new TextareaAutoSize(textareaPET));
+    }
+    console.log(wrapper);
 }
 
-console.log(wrapper);
 
 $('.select2')?.select2({
     width: 'resolve',
@@ -170,25 +172,16 @@ function updateUserPhysicalExercise() {
     let inputs = document.querySelectorAll("div[id^=intradaily-exercises] .item-count, div[id^=intradaily-exercises] .item-comment");
     for (const [key, input] of Object.entries(inputs)) {
         input.addEventListener('change', function (event) {
-
-            console.log(event.target)
-
             let data = {};
             let id = 0;
             let inputNameAttr = event.target.getAttribute('name');
-
             if (event.target.classList.contains('item-count')) {
                 id = inputNameAttr.replace("pe-count-", "");
                 data.count = event.target.value;
             } else if (event.target.classList.contains('item-comment')) {
                 id = inputNameAttr.replace("pe-comment-", "");
                 data.comment = event.target.value;
-
-                console.log('event.target.type');
-                console.log(event.target.type);
-
             }
-
             data.date = window.location.pathname.replace("/day/", "");
             data.queryString = window.location.search;
 
@@ -218,12 +211,7 @@ function deleteUserPhysicalExercise() {
     let deleteControls = document.querySelectorAll("div[id^=intradaily-exercises] .delete-control i");
     for (const [key, control] of Object.entries(deleteControls)) {
         control.addEventListener('click', function (event) {
-            console.log(event.target);
-
             let id = event.target.id.replace("i-element-", "");
-
-            console.log(id);
-
             let data = {};
             data.date = window.location.pathname.replace("/day/", "");
             data.queryString = window.location.search;
@@ -441,4 +429,14 @@ window.addEventListener('resize', () => {
     for (let wrapperItem of wrapper) {
         wrapperItem.update();
     }
+});
+
+//month picker
+let monthPickerInput = document.querySelector('.month-picker');
+
+monthPickerInput?.addEventListener('change', (event) => {
+    console.log(event.target.value);
+    console.log(window.location);
+
+    window.location.replace(window.location.origin + '?year-month=' + event.target.value);
 });

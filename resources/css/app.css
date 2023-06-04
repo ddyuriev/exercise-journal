@@ -103,6 +103,10 @@ textarea:focus-visible {
     outline: none;
 }
 
+.month-picker {
+    border: none;
+}
+
 /*end common*/
 
 
@@ -540,5 +544,3 @@ body:has(.side-menu:checked) {
         bottom: 0;
     }
 }
-
-

@@ -3,7 +3,7 @@
 
     <div id="calendar">
         <div class="text-center @if(request('device_type') != 'computer') pt-2 @endif">
-            <strong>{{$month_name}}, {{$year}}</strong>
+            <input type="month" class="month-picker" name="start" min="2022-01" value="{{$year}}-{{$month}}">
         </div>
         <div class="row mb-2 mt-4">
             @foreach(['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'] as $item)
