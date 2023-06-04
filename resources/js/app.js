@@ -2,9 +2,20 @@ import "bootstrap";
 import $ from 'jquery';
 
 window.$ = window.jQuery = $;
+
 import select2 from 'select2';
 
 select2();
+
+import {TextareaAutoSize} from 'textarea-autosize'
+let wrapper = [];
+
+let textareasPET = document.querySelectorAll('textarea.js-auto-size');
+for (const [key, textareaPET] of Object.entries(textareasPET)) {
+    wrapper.push(new TextareaAutoSize(textareaPET));
+}
+
+console.log(wrapper);
 
 $('.select2')?.select2({
     width: 'resolve',
@@ -40,10 +51,12 @@ function createUserPhysicalExercise(value) {
             if (data.is_need_reload) {
                 location.reload();
             } else {
-                document.getElementById('intradaily-exercises-body').remove();
-                drawUserPhysicalExerciseTable(data.items);
-                updateUserPhysicalExercise();
-                deleteUserPhysicalExercise();
+                // document.getElementById('intradaily-exercises-body').remove();
+                // drawUserPhysicalExerciseTable(data.items);
+                // updateUserPhysicalExercise();
+                // deleteUserPhysicalExercise();
+
+                UserPhysicalExerciseUpdateDOM(data.items);
             }
         }
     });
@@ -154,7 +167,7 @@ physicalExercisesSettingsSearchInput?.addEventListener('keyup', (event) => {
 
 //Таблица выполненных упражнений внутри дня
 function updateUserPhysicalExercise() {
-    let inputs = document.querySelectorAll("#intradaily-exercises input");
+    let inputs = document.querySelectorAll("div[id^=intradaily-exercises] .item-count, div[id^=intradaily-exercises] .item-comment");
     for (const [key, input] of Object.entries(inputs)) {
         input.addEventListener('change', function (event) {
 
@@ -170,6 +183,10 @@ function updateUserPhysicalExercise() {
             } else if (event.target.classList.contains('item-comment')) {
                 id = inputNameAttr.replace("pe-comment-", "");
                 data.comment = event.target.value;
+
+                console.log('event.target.type');
+                console.log(event.target.type);
+
             }
 
             data.date = window.location.pathname.replace("/day/", "");
@@ -188,10 +205,7 @@ function updateUserPhysicalExercise() {
             }).then(data => {
                 console.log(data);
                 if (data.is_success) {
-                    document.getElementById('intradaily-exercises-body').remove();
-                    drawUserPhysicalExerciseTable(data.items);
-                    updateUserPhysicalExercise();
-                    deleteUserPhysicalExercise();
+                    UserPhysicalExerciseUpdateDOM(data.items);
                 }
             });
         });
@@ -200,17 +214,11 @@ function updateUserPhysicalExercise() {
 
 updateUserPhysicalExercise();
 
-
 function deleteUserPhysicalExercise() {
-    let deleteControls = document.querySelectorAll("#intradaily-exercises .delete-control i");
+    let deleteControls = document.querySelectorAll("div[id^=intradaily-exercises] .delete-control i");
     for (const [key, control] of Object.entries(deleteControls)) {
         control.addEventListener('click', function (event) {
-
             console.log(event.target);
-            // console.log(event.target.querySelector('i'));
-
-            // let subelement = event.target.querySelector('i');
-            // console.log(subelement);
 
             let id = event.target.id.replace("i-element-", "");
 
@@ -233,15 +241,10 @@ function deleteUserPhysicalExercise() {
             }).then(data => {
                 console.log(data);
                 if (data.is_success) {
-                    // console.log('draw');
-
                     if (data.is_need_reload) {
                         location.reload();
                     } else {
-                        document.getElementById('intradaily-exercises-body').remove();
-                        drawUserPhysicalExerciseTable(data.items);
-                        updateUserPhysicalExercise();
-                        deleteUserPhysicalExercise();
+                        UserPhysicalExerciseUpdateDOM(data.items);
                     }
                 }
             });
@@ -254,34 +257,27 @@ deleteUserPhysicalExercise();
 
 
 function drawUserPhysicalExerciseTable(data) {
-    // console.log('drawUserPhysicalExerciseTable- data');
-    // console.log(data);
-
     const intradailyExercises = document.getElementById('intradaily-exercises');
     const intradailyExercisesBody = document.createElement('div');
     intradailyExercisesBody.id = 'intradaily-exercises-body';
     intradailyExercises.insertAdjacentElement('beforeend', intradailyExercisesBody);
 
+    const intradailyExercisesLowRes = document.getElementById('intradaily-exercises-low-res');
+    const intradailyExercisesBodyLowRes = document.createElement('div');
+    intradailyExercisesBodyLowRes.id = 'intradaily-exercises-body-low-res';
+    intradailyExercisesLowRes.insertAdjacentElement('beforeend', intradailyExercisesBodyLowRes);
+
     for (const [key, datum] of Object.entries(data)) {
-
-        // console.log('datum');
-        // console.log(datum);
-
         let element = document.createElement('div');
         element.setAttribute('draggable', true);
-        element.classList.add("row");
-        element.classList.add("block-body");
+        element.classList.add("row", "block-body", "mt-2");
 
         let subelementNumber = document.createElement('div');
-        subelementNumber.classList.add("col-05-cstm");
-        subelementNumber.classList.add("text-start");
-        subelementNumber.classList.add("physical-exercise-" + datum.id);
+        subelementNumber.classList.add("col-05-cstm", "text-start", "physical-exercise-" + datum.id);
         subelementNumber.innerHTML = datum.intraday_key;
 
         let subelementName = document.createElement('div');
-        subelementName.classList.add("col-35-cstm");
-        subelementName.classList.add("text-start");
-        subelementName.classList.add("physical-exercise-" + datum.id);
+        subelementName.classList.add("col-35-cstm", "text-start", "physical-exercise-" + datum.id);
         let subelementNameSpan = document.createElement('span');
         subelementNameSpan.innerHTML = datum.physical_exercises.name;
         subelementName.insertAdjacentElement('beforeend', subelementNameSpan);
@@ -289,12 +285,11 @@ function drawUserPhysicalExerciseTable(data) {
         let subelementCount = document.createElement('div');
         subelementCount.classList.add("col-2");
         let subelementCountDiv = document.createElement('div');
-        subelementCountDiv.classList.add("border-bottom-hover");
-        subelementCountDiv.classList.add("border-bottom");
+        subelementCountDiv.classList.add("border-bottom-hover", "border-bottom");
         subelementCount.insertAdjacentElement('afterbegin', subelementCountDiv);
         let subelementCountInput = document.createElement('input');
         subelementCountInput.classList.add("item-count");
-        subelementCountInput.type = "text";
+        subelementCountInput.type = "number";
         subelementCountInput.setAttribute('autocomplete', "none");
         subelementCountInput.setAttribute('name', "pe-count-" + datum.id);
         subelementCountInput.value = datum.count;
@@ -303,31 +298,24 @@ function drawUserPhysicalExerciseTable(data) {
         let subelementComment = document.createElement('div');
         subelementComment.classList.add("col-5");
         let subelementCommentDiv = document.createElement('div');
-        subelementCommentDiv.classList.add("border-bottom-hover");
-        subelementCommentDiv.classList.add("border-bottom");
+        subelementCommentDiv.classList.add("border-bottom-hover", "border-bottom");
         subelementComment.insertAdjacentElement('afterbegin', subelementCommentDiv);
-        let subelemenCommentInput = document.createElement('input');
-        subelemenCommentInput.classList.add("item-comment");
-        subelemenCommentInput.type = "text";
-        subelemenCommentInput.setAttribute('autocomplete', "none");
-        subelemenCommentInput.setAttribute('name', "pe-comment-" + datum.id);
-        subelemenCommentInput.setAttribute('title', datum.comment);
-        subelemenCommentInput.value = datum.comment;
-        subelementCommentDiv.insertAdjacentElement('afterbegin', subelemenCommentInput);
+
+        let subelementCommentTextArea = document.createElement('textarea');
+        subelementCommentTextArea.classList.add("item-comment", "js-auto-size", "color-gray");
+        subelementCommentTextArea.setAttribute('name', "pe-comment-" + datum.id);
+        subelementCommentTextArea.innerHTML = datum.comment;
+        subelementCommentDiv.insertAdjacentElement('afterbegin', subelementCommentTextArea);
 
         let subelementControl = document.createElement('div');
-        subelementControl.classList.add("col-1");
-        subelementControl.classList.add("delete-control");
+        subelementControl.classList.add("col-1", "delete-control");
         let subelementControlDiv = document.createElement('div');
-        subelementControlDiv.classList.add("h5");
-        subelementControlDiv.classList.add("position-relative");
+        subelementControlDiv.classList.add("h5", "position-relative");
         subelementControl.insertAdjacentElement('afterbegin', subelementControlDiv);
         let subelemenControlI = document.createElement('i');
         subelemenControlI.id = datum.id;
-        subelemenControlI.classList.add("bi");
-        subelemenControlI.classList.add("bi-x");
-        subelemenControlI.classList.add("position-absolute");
-        subelemenControlI.classList.add("end-0");
+        subelemenControlI.classList.add("bi", "bi-x", "position-absolute", "end-0");
+
         subelementControlDiv.insertAdjacentElement('afterbegin', subelemenControlI);
 
 
@@ -338,6 +326,78 @@ function drawUserPhysicalExerciseTable(data) {
         element.insertAdjacentElement('afterbegin', subelementNumber);
 
         intradailyExercisesBody.insertAdjacentElement('beforeend', element);
+
+        let elementLR = document.createElement('div');
+        elementLR.setAttribute('draggable', true);
+        elementLR.classList.add("row", "block-body", "mt-4");
+
+        let subelementLRName = document.createElement('div');
+        subelementLRName.classList.add("col-8", "text-start", "physical-exercise-" + datum.id);
+        let subelementLRNameSpan = document.createElement('span');
+        subelementLRNameSpan.classList.add("color-goldenrod");
+        subelementLRNameSpan.innerHTML = datum.physical_exercises.name;
+        subelementLRName.insertAdjacentElement('beforeend', subelementLRNameSpan);
+
+        let subelementLRCount = document.createElement('div');
+        subelementLRCount.classList.add("col-2");
+        let subelementLRCountDiv = document.createElement('div');
+        subelementLRCountDiv.classList.add("border-bottom-hover", "border-bottom");
+        let subelementLRCountInput = document.createElement('input');
+        subelementLRCountInput.classList.add("item-count", "text-center");
+        subelementLRCountInput.type = "number";
+        subelementLRCountInput.setAttribute('autocomplete', "none");
+        subelementLRCountInput.setAttribute('name', "pe-count-" + datum.id);
+        subelementLRCountInput.value = datum.count;
+        subelementLRCountDiv.insertAdjacentElement('afterbegin', subelementLRCountInput);
+        subelementLRCount.insertAdjacentElement('afterbegin', subelementLRCountDiv);
+
+        let subelementLRControl = document.createElement('div');
+        subelementLRControl.classList.add("col-2");
+        let subelementLRControlDiv = document.createElement('div');
+        subelementLRControlDiv.classList.add("delete-control", "text-center");
+        let subelementLRControlI = document.createElement('i');
+        subelementLRControlI.id = datum.id;
+        subelementLRControlI.classList.add("bi", "bi-x");
+        subelementLRControlDiv.insertAdjacentElement('afterbegin', subelementLRControlI);
+        subelementLRControl.insertAdjacentElement('afterbegin', subelementLRControlDiv);
+
+        elementLR.insertAdjacentElement('afterbegin', subelementLRControl);
+        elementLR.insertAdjacentElement('afterbegin', subelementLRCount);
+        elementLR.insertAdjacentElement('afterbegin', subelementLRName);
+
+        let elementLRSecondLine = document.createElement('div');
+        elementLRSecondLine.classList.add("row", "block-body");
+
+        let elementLRSecondLineDiv = document.createElement('div');
+        elementLRSecondLineDiv.classList.add("col-12");
+        let elementLRSecondLineDivDiv = document.createElement('div');
+        elementLRSecondLineDivDiv.classList.add("border-bottom-hover", "border-bottom");
+        let elementLRSecondLineTextArea = document.createElement('textarea');
+        elementLRSecondLineTextArea.classList.add("item-comment", "js-auto-size", "color-gray");
+        elementLRSecondLineTextArea.setAttribute('name', "pe-comment-" + datum.id);
+        elementLRSecondLineTextArea.innerHTML = datum.comment;
+        elementLRSecondLineDivDiv.insertAdjacentElement('afterbegin', elementLRSecondLineTextArea);
+        elementLRSecondLineDiv.insertAdjacentElement('afterbegin', elementLRSecondLineDivDiv);
+        elementLRSecondLine.insertAdjacentElement('afterbegin', elementLRSecondLineDiv);
+
+        intradailyExercisesBodyLowRes.insertAdjacentElement('beforeend', elementLR);
+        intradailyExercisesBodyLowRes.insertAdjacentElement('beforeend', elementLRSecondLine);
+    }
+}
+
+function UserPhysicalExerciseUpdateDOM(items) {
+    document.getElementById('intradaily-exercises-body').remove();
+    document.getElementById('intradaily-exercises-body-low-res').remove();
+
+    drawUserPhysicalExerciseTable(items);
+    updateUserPhysicalExercise();
+    deleteUserPhysicalExercise();
+
+    //since i remove the elements, we need to redefine wrapper
+    let textareasPET = document.querySelectorAll('textarea.js-auto-size');
+    wrapper = [];
+    for (const [key, textareaPET] of Object.entries(textareasPET)) {
+        wrapper.push(new TextareaAutoSize(textareaPET));
     }
 }
 
@@ -371,5 +431,14 @@ visibility: visible;
 animation: show 0.8s forwards;
         `;
         isProfileVisible = 1;
+    }
+});
+
+//textarea auto-size
+window.addEventListener('resize', () => {
+    //if we update wrapped elements only when switch between tables, the auto-size textarea component does not always work as expected.
+    //So we have to do this for every resize
+    for (let wrapperItem of wrapper) {
+        wrapperItem.update();
     }
 });

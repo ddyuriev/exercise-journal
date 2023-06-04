@@ -10,7 +10,6 @@ body {
 }
 
 :root {
-    /*--header: 0vh;*/
     --header: 6vh;
 }
 
@@ -84,12 +83,24 @@ input:focus {
     outline: none;
 }
 
-.color-gray{
+.color-gray {
     color: gray;
 }
 
-.color-goldenrod{
+.color-goldenrod {
     color: goldenrod;
+}
+
+textarea {
+    box-sizing: border-box;
+    width: 100%;
+    border: none;
+    padding: 0 !important;
+    display: block;
+}
+
+textarea:focus-visible {
+    outline: none;
 }
 
 /*end common*/
@@ -221,7 +232,7 @@ input:focus {
 }
 
 /*resolution from x to MAX*/
-@media screen and (min-width: 768.1px){
+@media screen and (min-width: 768.1px) {
     #intradaily-exercises-low-res {
         display: none;
     }
@@ -241,11 +252,6 @@ input:focus {
     padding-left: 0;
     width: 100%;
     line-height: normal;
-}
-
-/* span contenteditable no border*/
-.intradaily-exercises-common span:focus {
-    outline: none;
 }
 
 .intradaily-exercises-common .delete-control i {
@@ -268,20 +274,10 @@ input:focus {
     display: block;
 }
 
-
-#intradaily-exercises .row {
-    min-height: 3vh;
-}
-
-#intradaily-exercises .delete-control div {
-    margin-top: 0.5rem;
-}
-
 #intradaily-exercises span {
     display: block;
     overflow: hidden;
 }
-
 
 
 #intradaily-exercises-low-res .block-body {
@@ -308,6 +304,15 @@ input:focus {
     width: 100%;
     position: absolute;
     left: 0;
+}
+
+#intradaily-exercises-low-res .ie-lr-header {
+    background-color: #6996ff14;
+}
+
+#intradaily-exercises-low-res .ie-lr-pre-header {
+    height: 1.5rem;
+    background-color: #6996ff14;
 }
 
 /*end intradaily table*/
