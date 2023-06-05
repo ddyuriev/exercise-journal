@@ -1,14 +1,16 @@
-import "bootstrap";
-import $ from 'jquery';
+import 'bootstrap';
 
+import $ from 'jquery';
 window.$ = window.jQuery = $;
 
 import select2 from 'select2';
-
 select2();
+$('.select2')?.select2({
+    width: 'resolve',
+    theme: 'bootstrap-5',
+})
 
 import {TextareaAutoSize} from 'textarea-autosize'
-
 let wrapper = [];
 let textareasPET = document.querySelectorAll('textarea.js-auto-size');
 if (Object.keys(textareasPET).length) {
@@ -18,11 +20,7 @@ if (Object.keys(textareasPET).length) {
     console.log(wrapper);
 }
 
-
-$('.select2')?.select2({
-    width: 'resolve',
-    theme: 'bootstrap-5',
-})
+import Chart from 'chart.js/auto';
 
 //Добавление user_physical_exercises через select2
 $('#select-physical_exercise').on('select2:select', function (e) {
@@ -439,4 +437,26 @@ monthPickerInput?.addEventListener('change', (event) => {
     console.log(window.location);
 
     window.location.replace(window.location.origin + '?year-month=' + event.target.value);
+});
+
+//chart
+const ctx = document.getElementById('myChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
 });

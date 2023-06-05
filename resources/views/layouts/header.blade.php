@@ -61,12 +61,16 @@
                                                        href="{{route('settings.index')}}">
                                                         <i class="bi bi-gear"></i>
                                                     </a>
+                                                    <a class="nav-link text-center mt-4"
+                                                       href="{{route('statistics.index')}}">
+                                                        <i class="bi bi-bar-chart-line"></i>
+                                                    </a>
                                                     <form method="POST" name="logout" class="text-center mt-4"
                                                           action="{{ route('logout') }}">
                                                         @csrf
                                                         <span role="button" onclick="logout.submit()">
-                                            <i class="bi bi-box-arrow-right"></i>
-                                        </span>
+                                                            <i class="bi bi-box-arrow-right"></i>
+                                                        </span>
                                                     </form>
                                                 </div>
                                             </div>

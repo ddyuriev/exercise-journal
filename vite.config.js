@@ -17,6 +17,7 @@ export default defineConfig({
             '~select2-bootstrap-5-theme' : path.resolve(__dirname, 'node_modules/select2-bootstrap-5-theme'),
             '~bootstrap-icons' : path.resolve(__dirname, 'node_modules/bootstrap-icons'),
             '~textarea-autosize' : path.resolve(__dirname, 'node_modules/textarea-autosize'),
+            '~chart.js' : path.resolve(__dirname, 'node_modules/chart.js'),
         }
     }
 });

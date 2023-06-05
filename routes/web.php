@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserPhysicalExerciseController;
+use App\Http\Controllers\StatisticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/day/user-physical-exercises', [UserPhysicalExerciseController::class, 'create'])->name('user-physical-exercises.create');
     Route::put('/day/user-physical-exercises/{id}', [UserPhysicalExerciseController::class, 'update'])->name('user-physical-exercises.update');
     Route::delete('/day/user-physical-exercises/{id}', [UserPhysicalExerciseController::class, 'destroy'])->name('user-physical-exercises.destroy');
+
+    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics.index');
 });
 
 Route::get('/register-retry', function(){
