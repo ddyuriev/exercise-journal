@@ -1,9 +1,11 @@
 import 'bootstrap';
 
 import $ from 'jquery';
+
 window.$ = window.jQuery = $;
 
 import select2 from 'select2';
+
 select2();
 $('.select2')?.select2({
     width: 'resolve',
@@ -11,13 +13,13 @@ $('.select2')?.select2({
 })
 
 import {TextareaAutoSize} from 'textarea-autosize'
+
 let wrapper = [];
 let textareasPET = document.querySelectorAll('textarea.js-auto-size');
 if (Object.keys(textareasPET).length) {
     for (const [key, textareaPET] of Object.entries(textareasPET)) {
         wrapper.push(new TextareaAutoSize(textareaPET));
     }
-    console.log(wrapper);
 }
 
 import Chart from 'chart.js/auto';
@@ -49,13 +51,8 @@ function createUserPhysicalExercise(value) {
         console.log(data);
         if (data.is_success) {
             if (data.is_need_reload) {
-                location.reload();
+                window.location = window.location.origin + window.location.pathname + '?page=' + data.page_correction;
             } else {
-                // document.getElementById('intradaily-exercises-body').remove();
-                // drawUserPhysicalExerciseTable(data.items);
-                // updateUserPhysicalExercise();
-                // deleteUserPhysicalExercise();
-
                 UserPhysicalExerciseUpdateDOM(data.items);
             }
         }
@@ -228,7 +225,7 @@ function deleteUserPhysicalExercise() {
                 console.log(data);
                 if (data.is_success) {
                     if (data.is_need_reload) {
-                        location.reload();
+                        window.location = window.location.origin + window.location.pathname + '?page=' + data.page_correction;
                     } else {
                         UserPhysicalExerciseUpdateDOM(data.items);
                     }
@@ -440,23 +437,57 @@ monthPickerInput?.addEventListener('change', (event) => {
 });
 
 //chart
-const ctx = document.getElementById('myChart');
+const ctx = document.getElementById('statistics-chart');
+let statisticChart;
 
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+if (ctx) {
+    drawChart(statisticsData.keysPeriod, statisticsData.statistics, statisticsData.colors);
+}
+
+$('#statistics-select').on('select2:select', function (e) {
+    fetch('/statistics' + '?period=' + e.target.value, {
+        headers: {
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    }).then(response => {
+        return response.json();
+    }).then(data => {
+        console.log(data);
+        if (data.is_success) {
+            if (statisticChart) statisticChart.destroy();
+            drawChart(data.data.keysPeriod, data.data.statistics, data.data.colors);
+            window.history.pushState("Details", "Title", "statistics?period=" + e.target.value);
+        }
+    });
+
+});
+
+
+function drawChart(labelsObj, statisticsObj, colorsObj) {
+    let labels = Object.keys(labelsObj);
+    let datasets = [];
+    for (const [key, value] of Object.entries(statisticsObj)) {
+        datasets.push({
+            'label': key,
+            'data': statisticsObj[key],
+            'borderWidth': 2,
+            'borderColor': colorsObj.key
+        });
+    }
+    statisticChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
             }
         }
-    }
-});
+    });
+}

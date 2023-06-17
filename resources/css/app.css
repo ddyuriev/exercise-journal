@@ -436,6 +436,10 @@ body:has(.side-menu:checked) {
     overflow: hidden;
 }
 
+.header-mobile ul {
+    padding-inline-start: 20px;
+}
+
 /*end mobile header-------------------------------------------------------*/
 
 /*begin desktop header*/
@@ -544,3 +548,21 @@ body:has(.side-menu:checked) {
         bottom: 0;
     }
 }
+
+
+/*begin statistics */
+
+/*resolution from 0 to x*/
+@media screen and (max-width: 768px) {
+    .sel2-cstm {
+        width: 50%;
+    }
+}
+
+@media screen and (min-width: 768.1px) {
+    .sel2-cstm {
+        width: 25%;
+    }
+}
+
+/*end statistics */

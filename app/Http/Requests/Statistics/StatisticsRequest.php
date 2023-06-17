@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Statistics;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class DestroyUserPhysicalExercisesRequest extends FormRequest
+class StatisticsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class DestroyUserPhysicalExercisesRequest extends FormRequest
     public function rules()
     {
         return [
-            'date' => ['required', 'date']
+            'period' => ['in:1,2,3,4,5']
         ];
     }
 }

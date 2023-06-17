@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\UserPhysicalExercises;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class UpdateUserPhysicalExercisesRequest extends FormRequest
+class DestroyUserPhysicalExercisesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class UpdateUserPhysicalExercisesRequest extends FormRequest
     public function rules()
     {
         return [
-            'count' => ['integer', 'min:0']
+            'date' => ['required', 'date']
         ];
     }
 }

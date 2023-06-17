@@ -13,11 +13,6 @@
 
 @include('layouts.header')
 
-{{--<div class="pre-header">--}}
-{{--    <div class="container">--}}
-{{--    </div>--}}
-{{--</div>--}}
-
 <div class="container body-container pt-4">
     <div class="@if (request('device_type') == 'computer') row @endif">
         @if (request('device_type') == 'computer')
@@ -32,7 +27,6 @@
             </div>
         @endif
     </div>
-
 </div>
 
 </body>

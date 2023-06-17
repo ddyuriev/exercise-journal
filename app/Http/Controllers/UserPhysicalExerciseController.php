@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\StringHelper;
-use App\Http\Requests\CreateUserPhysicalExercisesRequest;
-use App\Http\Requests\DestroyUserPhysicalExercisesRequest;
-use App\Http\Requests\UpdateUserPhysicalExercisesRequest;
+use App\Http\Requests\UserPhysicalExercises\CreateUserPhysicalExercisesRequest;
+use App\Http\Requests\UserPhysicalExercises\DestroyUserPhysicalExercisesRequest;
+use App\Http\Requests\UserPhysicalExercises\UpdateUserPhysicalExercisesRequest;
 use App\Models\User;
 use App\Models\UserPhysicalExercise;
 use App\Services\UserPhysicalExerciseService;
@@ -78,9 +78,13 @@ class UserPhysicalExerciseController extends Controller
             'physical_exercise_id' => $data['physicalExerciseId'],
             'intraday_key' => $this->calculateNewIntradayKey($this->date),
         ];
-        if ($this->date->clone()->toDateString() <= Carbon::now()->toDateString()) {
+
+        $itemsOldCount = $this->getRemainder();
+
+        //special created_at if creation of records retroactively or in advance
+        if ($this->date->clone()->toDateString() < Carbon::now()->toDateString()) {
             $createData['created_at'] = $this->date->clone()->endOfDay();
-        } elseif ($this->date->clone()->toDateString() >= Carbon::now()->toDateString()) {
+        } elseif ($this->date->clone()->toDateString() > Carbon::now()->toDateString()) {
             $createData['created_at'] = $this->date->clone()->startOfDay();
         }
 
@@ -91,9 +95,11 @@ class UserPhysicalExerciseController extends Controller
 
         $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $page);
 
+        $isNeedReload = $itemsOldCount !== 0 && ceil($itemsOldCount / $this->perPage) != ceil(($itemsOldCount + 1) / $this->perPage);
         return response()->json([
             'is_success' => true,
-            'is_need_reload' => $this->getRemainder() % $this->perPage === 1,
+            'is_need_reload' => $isNeedReload,
+            'page_correction' => $isNeedReload ? $page + 1 : 0,
             'items' => $userPhysicalExercises,
         ]);
 
@@ -149,6 +155,9 @@ class UserPhysicalExerciseController extends Controller
                 'is_success' => false
             ]);
         }
+
+        $itemsOldCount = $this->getRemainder();
+
         try {
             $userPhysicalExercises->delete();
         } catch (\Throwable $exception) {
@@ -163,9 +172,11 @@ class UserPhysicalExerciseController extends Controller
 
         $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $page);
 
+        $isNeedReload = $itemsOldCount !== 1 && ceil($itemsOldCount / $this->perPage) != ceil(($itemsOldCount - 1) / $this->perPage);
         return response()->json([
             'is_success' => true,
-            'is_need_reload' => $this->getRemainder() % $this->perPage === 0,
+            'is_need_reload' => $isNeedReload,
+            'page_correction' => $isNeedReload ? $page - 1 : 0,
             'items' => $userPhysicalExercises
         ]);
     }
@@ -205,11 +216,13 @@ class UserPhysicalExerciseController extends Controller
             $caseStr .= " WHEN id = {$value} THEN {$intradayKey}";
         }
 
-        DB::update("UPDATE user_physical_exercises SET intraday_key =
+        if ($caseStr && $currentKeysIdsStr) {
+            DB::update("UPDATE user_physical_exercises SET intraday_key =
                         (CASE
                             $caseStr
                          END)
-        WHERE id IN ($currentKeysIdsStr)");
+            WHERE id IN ($currentKeysIdsStr)");
+        }
     }
 
     /**
@@ -220,7 +233,7 @@ class UserPhysicalExerciseController extends Controller
         return UserPhysicalExercise
             ::with('physical_exercises')
             ->where('user_id', Auth::id())
-            ->where('created_at', '>=', $this->date->startOfDay())
+            ->where('created_at', '>=', $this->date->clone()->startOfDay())
             ->where('created_at', '<=', $this->date->clone()->endOfDay())
             ->count();
     }

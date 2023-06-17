@@ -115,7 +115,7 @@
                         <nav class="nav">
                             <ul class="menu">
                                 <li class="">
-                                    <div class="text-nowrap overflow-hidden" style="width: 30vw;">
+                                    <div class="text-nowrap overflow-hidden">
                                         <a class="nav-link text-nowrap" href="{{route('profile.index')}}">
                                             @auth()
                                                 {{ \Illuminate\Support\Facades\Auth::user()->name}}
@@ -126,6 +126,11 @@
                                 <li>
                                     <a class="nav-link" href="{{route('settings.index')}}">
                                         настройки
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" href="{{route('statistics.index')}}">
+                                        статистика
                                     </a>
                                 </li>
                                 <li>

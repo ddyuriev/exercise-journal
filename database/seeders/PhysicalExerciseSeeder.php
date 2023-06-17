@@ -89,9 +89,14 @@ class PhysicalExerciseSeeder extends Seeder
                 [
                     'name' => 'Крылья'
                 ],
-
                 [
                     'name' => 'Массаж глаз'
+                ],
+                [
+                    'name' => 'Стойка на гвоздях'
+                ],
+                [
+                    'name' => 'Повороты тела'
                 ],
             ]
         );
