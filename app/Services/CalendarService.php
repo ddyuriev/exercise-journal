@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\UserPhysicalExercise;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class CalendarService
 {
@@ -22,11 +24,21 @@ class CalendarService
             $beginDateAux = $beginDate->clone();
             array_push($resultAux, [
                 'date' => $beginDateAux->addDays($i)->day,
+                'full_date' => $beginDate->clone()->addDays($i)->toDateString(),
                 'is_current_date' => $currentMonth === $beginDateAux->month && $day === $beginDateAux->day,
                 'month' => $beginDateAux->format('m'),
                 'is_this_month' => $currentMonth === $beginDateAux->month
             ]);
         }
+
+        $exercises = UserPhysicalExercise::select(\DB::raw('DATE_FORMAT(created_at,"%Y-%m-%d") as rounded_date'), \DB::raw('count(*) as count'))
+            ->where('user_id', Auth::id())
+            ->where('created_at', '>=', $resultAux[0]['full_date'])
+            ->where('created_at', '<=', $resultAux[count($resultAux) - 1]['full_date'])
+            ->groupBy('rounded_date')
+            ->orderBy('rounded_date')
+            ->pluck('count', 'rounded_date')
+            ->toArray();
 
         $result = array_chunk($resultAux, 7);
 
@@ -44,6 +56,7 @@ class CalendarService
                 if ($keyDay === 6) {
                     $item['day'] = 'last_day';
                 }
+                if (!empty($exercises[$item['full_date']])) $item['exercises_count'] = $exercises[$item['full_date']];
             }
         }
         return $result;

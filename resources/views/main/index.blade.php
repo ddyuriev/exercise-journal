@@ -22,6 +22,13 @@
                                     {{$itemDay['date']}}
                                 </span>
                             </div>
+                            @if(!empty($itemDay['exercises_count']))
+                                <div class="daygrid-dot">
+                                </div>
+                                <div class="exercises_count">
+                                    {{$itemDay['exercises_count']}}
+                                </div>
+                            @endif
                         </div>
                     @endforeach
                 </div>

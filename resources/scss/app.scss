@@ -69,4 +69,26 @@ $calendar_border_radius: 4%;
     font-weight: bold;
 }
 
+#calendar-body .row .col {
+    position: relative;
+}
+
+#calendar-body .daygrid-dot {
+    position: absolute;
+    left: 0.4rem;
+    bottom: 0.4rem;
+}
+
+#calendar-body .exercises_count {
+    position: absolute;
+    left: 1.2rem;
+    bottom: 0;
+    font-size: 0.85rem;
+}
+
+.daygrid-dot {
+    border: 0.3rem solid rgba(236, 185, 31, 0.99);
+    border-radius: 0.3rem;
+}
+
 /*--- end div calendar ---*/
