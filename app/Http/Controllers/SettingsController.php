@@ -5,11 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\PhysicalExercise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SettingsController extends Controller
 {
+    /**
+     * @var \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
     private $perPage;
 
+    /**
+     * SettingsController constructor.
+     */
     public function __construct()
     {
         $this->perPage = config('pagination.settings.per_page');
@@ -119,10 +126,10 @@ class SettingsController extends Controller
     {
         $userId = Auth::id();
 
-        $physicalExercises = PhysicalExercise::select(\DB::raw(
+        $physicalExercises = PhysicalExercise::select(DB::raw(
             'id, name, sub_sel.user_id as active, sub_sel.updated_at'
         ))
-            ->leftJoin(\DB::raw(
+            ->leftJoin(DB::raw(
                 <<<STR
             (SELECT *
             FROM `physical_exercise_user` pe_u

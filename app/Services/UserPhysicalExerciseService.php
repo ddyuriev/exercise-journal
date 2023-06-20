@@ -69,7 +69,7 @@ class UserPhysicalExerciseService
             Cache::put('colors', $colorsArr, $now->clone()->addWeek());
         }
 
-        \DB::statement("SET SQL_MODE=''");
+        DB::statement("SET SQL_MODE=''");
         $subSelectExercisesWithCount = UserPhysicalExercise::select('physical_exercise_id', DB::raw('count(id) as exercises_count'))
             ->where('user_physical_exercises.created_at', '>=', $startPeriod)
             ->where('user_physical_exercises.created_at', '<=', $now)
@@ -79,8 +79,8 @@ class UserPhysicalExerciseService
 
         $userPhysicalExercises = UserPhysicalExercise::select(
             'user_physical_exercises.physical_exercise_id',
-            \DB::raw('SUM(count) AS sum_count'),
-            \DB::raw('DATE_FORMAT(user_physical_exercises.created_at, "%Y-%m-%d") AS rounded_date'),
+            DB::raw('SUM(count) AS sum_count'),
+            DB::raw('DATE_FORMAT(user_physical_exercises.created_at, "%Y-%m-%d") AS rounded_date'),
             'physical_exercises.name as name'
         )
             ->leftJoin('physical_exercises', 'physical_exercises.id', '=', 'user_physical_exercises.physical_exercise_id')

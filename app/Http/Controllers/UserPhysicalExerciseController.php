@@ -17,10 +17,26 @@ use Illuminate\Support\Facades\DB;
 class UserPhysicalExerciseController extends Controller
 {
 
+    /**
+     * @var Carbon
+     */
     private $date;
 
+    /**
+     * @var \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
     private $perPage;
 
+    /**
+     * @var UserPhysicalExerciseService
+     */
+    private $userPhysicalExerciseService;
+
+    /**
+     * UserPhysicalExerciseController constructor.
+     * @param Request $request
+     * @param UserPhysicalExerciseService $userPhysicalExerciseService
+     */
     public function __construct(Request $request, UserPhysicalExerciseService $userPhysicalExerciseService)
     {
         $data = $request->all();
@@ -213,6 +229,9 @@ class UserPhysicalExerciseController extends Controller
         $caseStr = '';
         foreach ($currentKeysIds as $key => $value) {
             $intradayKey = $key + 1;
+            /**
+             * @psalm-suppress InvalidCast
+             */
             $caseStr .= " WHEN id = {$value} THEN {$intradayKey}";
         }
 

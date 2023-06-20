@@ -5,11 +5,13 @@ namespace App\Services;
 use App\Models\UserPhysicalExercise;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CalendarService
 {
 
     /**
+     * @param $date
      * @return array
      */
     public function getCalendar($date): array
@@ -31,7 +33,10 @@ class CalendarService
             ]);
         }
 
-        $exercises = UserPhysicalExercise::select(\DB::raw('DATE_FORMAT(created_at,"%Y-%m-%d") as rounded_date'), \DB::raw('count(*) as count'))
+        /**
+         * @psalm-suppress InvalidArrayOffset
+         */
+        $exercises = UserPhysicalExercise::select(DB::raw('DATE_FORMAT(created_at,"%Y-%m-%d") as rounded_date'), DB::raw('count(*) as count'))
             ->where('user_id', Auth::id())
             ->where('created_at', '>=', $resultAux[0]['full_date'])
             ->where('created_at', '<=', $resultAux[count($resultAux) - 1]['full_date'])
@@ -64,12 +69,13 @@ class CalendarService
 
 
     /**
+     * @param $date
      * @return int
      */
     private function crossedWeeksCount($date): int
     {
         $firstWeekOfMonthDate = $date->clone()->startOfMonth()->startOfWeek();
         $lastWeekOfMonthDate = $date->clone()->endOfMonth()->endOfWeek();
-        return ceil($lastWeekOfMonthDate->diffInDays($firstWeekOfMonthDate) / 7);
+        return intval(ceil($lastWeekOfMonthDate->diffInDays($firstWeekOfMonthDate) / 7));
     }
 }
