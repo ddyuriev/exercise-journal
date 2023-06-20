@@ -28,23 +28,17 @@ class UserPhysicalExerciseController extends Controller
     private $perPage;
 
     /**
-     * @var UserPhysicalExerciseService
-     */
-    private $userPhysicalExerciseService;
-
-    /**
      * UserPhysicalExerciseController constructor.
      * @param Request $request
      * @param UserPhysicalExerciseService $userPhysicalExerciseService
      */
-    public function __construct(Request $request, UserPhysicalExerciseService $userPhysicalExerciseService)
+    public function __construct(Request $request, private UserPhysicalExerciseService $userPhysicalExerciseService)
     {
         $data = $request->all();
         if (!empty($data['date'])) {
             $this->date = Carbon::parse($data['date']);
         }
         $this->perPage = config('pagination.settings.per_page');
-        $this->userPhysicalExerciseService = $userPhysicalExerciseService;
     }
 
     /**

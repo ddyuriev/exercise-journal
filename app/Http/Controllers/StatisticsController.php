@@ -7,19 +7,15 @@ use App\Services\UserPhysicalExerciseService;
 
 class StatisticsController extends Controller
 {
-    /**
-     * @var UserPhysicalExerciseService
-     */
-    private $userPhysicalExerciseService;
 
     /**
      * StatisticsController constructor.
      * @param UserPhysicalExerciseService $userPhysicalExerciseService
      */
-    public function __construct(UserPhysicalExerciseService $userPhysicalExerciseService)
+    public function __construct(private UserPhysicalExerciseService $userPhysicalExerciseService)
     {
-        $this->userPhysicalExerciseService = $userPhysicalExerciseService;
     }
+
 
     /**
      * @param StatisticsRequest $request

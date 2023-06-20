@@ -9,17 +9,11 @@ use Illuminate\Http\Request;
 class MainController extends Controller
 {
     /**
-     * @var CalendarService
-     */
-    private $calendarService;
-
-    /**
      * MainController constructor.
      * @param CalendarService $calendarService
      */
-    public function __construct(CalendarService $calendarService)
+    public function __construct(private CalendarService $calendarService)
     {
-        $this->calendarService = $calendarService;
     }
 
     /**
