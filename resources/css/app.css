@@ -95,7 +95,7 @@ textarea {
     box-sizing: border-box;
     width: 100%;
     border: none;
-    padding: 0 !important;
+    /*padding: 0 !important;*/
     display: block;
 }
 
@@ -319,6 +319,12 @@ textarea:focus-visible {
     background-color: #6996ff14;
 }
 
+
+
+#intradaily-exercises-body textarea {
+    padding: 0 !important;
+}
+
 /*end intradaily table*/
 
 
@@ -458,7 +464,7 @@ body:has(.side-menu:checked) {
 
 /*end desktop header-------------------------------------------------------*/
 
-/*begin settings page*/
+/*begin list settings page*/
 .menu a {
     color: var(--dark-gray);
 }
@@ -566,3 +572,16 @@ body:has(.side-menu:checked) {
 }
 
 /*end statistics */
+
+
+/* begin physicalExercisesIndex*/
+
+.physical-exercises-settings-header a {
+    color: var(--dark-gray);
+}
+
+.physical-exercises-settings-header a:hover {
+    color: var(--dark-gray);
+}
+
+/* end physicalExercisesIndex*/

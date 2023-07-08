@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\UserPhysicalExercises;
+namespace App\Http\Requests\PhysicalExercises;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class CreateUserPhysicalExercisesRequest extends FormRequest
+class StorePhysicalExercisesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,17 @@ class CreateUserPhysicalExercisesRequest extends FormRequest
     public function rules()
     {
         return [
-            'physicalExerciseId' => ['required', 'exists:App\Models\PhysicalExercise,id']
+            'name' => ['required', 'unique:physical_exercises,name'],
         ];
     }
+
+    public function messages(){
+
+        return [
+            'name.unique' => "Такое упражнение уже существует",
+        ];
+    }
+
+
 }
+

@@ -161,6 +161,13 @@ physicalExercisesSettingsSearchInput?.addEventListener('keyup', (event) => {
     }
 });
 
+//create by user
+
+
+document.querySelector('.physical-exercises-settings-header i')?.addEventListener('click', function (event) {
+    console.log(event.target);
+})
+
 
 //Таблица выполненных упражнений внутри дня
 function updateUserPhysicalExercise() {

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\StringHelper;
-use App\Http\Requests\UserPhysicalExercises\CreateUserPhysicalExercisesRequest;
+use App\Http\Requests\UserPhysicalExercises\StoreUserPhysicalExercisesRequest;
 use App\Http\Requests\UserPhysicalExercises\DestroyUserPhysicalExercisesRequest;
 use App\Http\Requests\UserPhysicalExercises\UpdateUserPhysicalExercisesRequest;
 use App\Models\User;
@@ -65,7 +65,7 @@ class UserPhysicalExerciseController extends Controller
             ->where('created_at', '<=', $date->clone()->endOfDay())
             ->paginate($this->perPage);
 
-        return view('main.view', [
+        return view('user_physical_exercise.view', [
             'device_type' => $request->device_type,
             'year' => $date->year,
             'month_name' => $date->monthName,
@@ -76,10 +76,10 @@ class UserPhysicalExerciseController extends Controller
     }
 
     /**
-     * @param CreateUserPhysicalExercisesRequest $request
+     * @param StoreUserPhysicalExercisesRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function create(CreateUserPhysicalExercisesRequest $request)
+    public function store(StoreUserPhysicalExercisesRequest $request)
     {
         $data = $request->all();
 

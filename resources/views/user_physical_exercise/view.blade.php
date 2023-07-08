@@ -37,7 +37,7 @@
                         </div>
                         <div class="col-2">
                             <div class="border-bottom-hover border-bottom">
-                                <input type="number" value="{{ $user_physical_exercise['count'] }}"
+                                <input type="text" value="{{ $user_physical_exercise['count'] }}"
                                        name="pe-count-{{$user_physical_exercise['id']}}"
                                        class="item-count" autocomplete="none">
                             </div>

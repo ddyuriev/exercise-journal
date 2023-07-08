@@ -2,15 +2,23 @@
 @section('content')
 
     <div id="physical-exercises-settings">
-        <div class="text-center">
-            <strong>Выбранные упражнения</strong>
+        <div class="row physical-exercises-settings-header">
+            <div class="col-9 d-flex align-items-center mb-3 justify-content-center">
+                {{--                <div class="align-middle">Выбранные упражнения<span class="fs-2"></span></div>--}}
+                Выбранные упражнения
+            </div>
+            <div class="col-3 d-flex align-items-center mb-3 flex-row-reverse">
+                <a href="{{ route('settings.physical-exercises.create') }}"> <i class="bi bi-plus-lg fs-2"></i></a>
+
+                {{--                <a class="btn btn-grow" href="{{ route('merchant.new') }}" role="button">{{__('Add New')}}</a>--}}
+            </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4 mt-2">
             <div class="row">
-                <label class="col-sm-12 col-form-label">{{__('Search')}}:</label>
                 <div class="col-sm-12">
-                    <input type="text" name="search" class="form-control search-input" value="{{request('name') }}"/>
+                    <input type="text" name="search" class="form-control search-input" value="{{request('name') }}"
+                           placeholder="{{__('Search')}}"/>
                 </div>
             </div>
         </div>
