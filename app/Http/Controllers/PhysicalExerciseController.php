@@ -45,7 +45,24 @@ class PhysicalExerciseController extends Controller
 
     public function store(StorePhysicalExercisesRequest $request)
     {
+        $requestData = $request->all();
 
+        /**
+         *  `name` field must be unique.
+         *  `name` or `private_name` must be present
+         */
+        $createData = [
+            'name' => $requestData['status'] == PhysicalExercise::STATUS_PUBLIC ? $requestData['name'] : $requestData['name'] . '_' . substr(hash('sha256', uniqid(mt_rand(), true)), 0, 8),
+            'private_name' => $requestData['name'],
+            'status' => $requestData['status'],
+            'description' => $requestData['description'],
+            'created_by' => Auth::id(),
+        ];
+
+        $physicalExercise = PhysicalExercise::create($createData);
+        Auth::user()->physicalExercises()->attach([$physicalExercise->id]);
+
+        return redirect()->route('settings.physical-exercises.index')->with(['alert-type' => 'success', 'message' => __('Physical Exercise Created')]);
     }
 
     /**
@@ -129,7 +146,7 @@ class PhysicalExerciseController extends Controller
         $userId = Auth::id();
 
         $physicalExercises = PhysicalExercise::select(DB::raw(
-            'id, name, sub_sel.user_id as active, sub_sel.updated_at'
+            'id, name, private_name, status, sub_sel.user_id as user_id, sub_sel.updated_at'
         ))
             ->leftJoin(DB::raw(
                 <<<STR

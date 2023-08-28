@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -16,7 +15,10 @@ return new class extends Migration
         Schema::create('physical_exercises', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique()->index();
+            $table->string('private_name')->index();
             $table->text('description')->nullable()->index();
+            $table->boolean('status');
+            $table->unsignedInteger('created_by');
             $table->timestamps();
         });
 

@@ -26,7 +26,7 @@ class UpdateUserPhysicalExercisesRequest extends FormRequest
     {
         return [
             'count' => ['integer', 'min:0'],
-            'comment' => ['string']
+            'comment' => ['string', 'nullable']
         ];
     }
 }

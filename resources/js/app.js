@@ -108,12 +108,19 @@ function drawSelectPhysicalExercisesTable(data) {
     for (const [key, datum] of Object.entries(data)) {
         const tr = tb.insertRow();
         tr.setAttribute("id", "tr-" + datum.id);
-        if (!datum.active) {
+        if (!datum.user_id) {
             tr.classList.add("physical-exercises-unselected");
         }
 
         let td = tr.insertCell();
-        td.appendChild(document.createTextNode(datum.name));
+        // td.appendChild(document.createTextNode(datum.name));
+
+        if(datum.status == 1){
+            td.appendChild(document.createTextNode(datum.private_name));
+            td.classList.add("name-personal");
+        }else{
+            td.appendChild(document.createTextNode(datum.name));
+        }
 
         td = tr.insertCell();
         td.appendChild(document.createTextNode(datum.description ?? ''));
@@ -122,7 +129,8 @@ function drawSelectPhysicalExercisesTable(data) {
         td.appendChild(document.createTextNode(''));
         td.classList.add("action-icons");
         td.classList.add("text-center");
-        let togglePosition = datum.active ? 'bi-toggle2-on' : 'bi-toggle2-off';
+
+        let togglePosition = datum.user_id ? 'bi-toggle2-on' : 'bi-toggle2-off';
         td.innerHTML = `
             <form method="POST" id="pe-toggle-${datum.id}" class="form-physical-exercises-toggle" action="/settings/physical-exercises/toggle">
                 <button class="btn btn-grow btn-confirm-recalculate">
@@ -498,3 +506,8 @@ function drawChart(labelsObj, statisticsObj, colorsObj) {
         }
     });
 }
+
+//remove search field
+$(".without-search").select2({
+    minimumResultsForSearch: Infinity
+});

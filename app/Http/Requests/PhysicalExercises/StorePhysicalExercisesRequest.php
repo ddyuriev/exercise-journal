@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\PhysicalExercises;
 
+use App\Rules\NameStatusUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
 
@@ -25,17 +26,19 @@ class StorePhysicalExercisesRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'unique:physical_exercises,name'],
+            'name' => ['required', new NameStatusUnique(request())],
+            'status' => ['required', 'in:1,2'],
         ];
     }
 
-    public function messages(){
-
+    public function messages()
+    {
         return [
             'name.unique' => "Такое упражнение уже существует",
+            'status.required' => "Такое упраж11нение уже существует",
+            'status.in
+            ' => "Такое упраж11нение уже существует",
         ];
     }
-
-
 }
 
