@@ -214,6 +214,13 @@ textarea:focus-visible {
     border-color: green !important;
 }
 
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #6c757d !important;
+}
+.select2-container .select2-selection--single .select2-selection__rendered {
+    padding-left: unset !important;
+}
+
 /*end select2*/
 
 /*PC navigation*/
