@@ -13,14 +13,18 @@ class NameStatusUnique implements Rule
 
     private $message;
 
+    private $id;
+
+
     /**
-     * Create a new rule instance.
-     *
-     * @return void
+     * NameStatusUnique constructor.
+     * @param Request $request
+     * @param null $id
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, $id = null)
     {
         $this->request = $request;
+        $this->id = $id;
     }
 
     /**
@@ -34,12 +38,17 @@ class NameStatusUnique implements Rule
     {
         $requestData = $this->request->all();
 
+        $physicalExerciseQuery = PhysicalExercise::query();
+        if ($this->id) {
+            $physicalExerciseQuery->whereNot('id', $this->id);
+        }
+
         if ($requestData['status'] == PhysicalExercise::STATUS_PRIVATE) {
             $this->message = 'Упражнение с таким именем, доступное только для вас, уже существует';
-            return empty(PhysicalExercise::where('private_name', $value)->where('created_by', Auth::id())->first());
+            return empty($physicalExerciseQuery->where('private_name', $value)->where('created_by', Auth::id())->first());
         } elseif ($requestData['status'] == PhysicalExercise::STATUS_PUBLIC) {
             $this->message = 'Упражнение с таким именем, доступное для других пользователей, уже существует';
-            return empty(PhysicalExercise::where('name', $value)->first());
+            return empty($physicalExerciseQuery->where('name', $value)->first());
         } else {
             return false;
         }

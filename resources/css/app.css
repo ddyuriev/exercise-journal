@@ -121,6 +121,9 @@ textarea:focus-visible {
 #physical-exercises-settings table .action-icons {
     width: 8%;
 }
+#physical-exercises-settings table .action-icons .btn{
+    --bs-btn-padding-x: 0.25rem;
+}
 
 .physical-exercises-unselected {
     color: rgba(128, 128, 128, 0.8);
@@ -590,11 +593,14 @@ body:has(.side-menu:checked) {
     color: var(--dark-gray);
 }
 
-#physical-exercises-settings .name-personal {
+#physical-exercises-settings .name-private {
     color: green;
     font-style: italic;
 }
 
+#physical-exercises-settings .name-confirmed {
+    color: darkgoldenrod;
+}
 
 /* end physicalExercisesIndex*/
 

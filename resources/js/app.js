@@ -103,6 +103,10 @@ function settingsTogglePhysicalExercisesEL() {
 settingsTogglePhysicalExercisesEL();
 
 function drawSelectPhysicalExercisesTable(data) {
+
+    console.log('data');
+    console.log(data);
+
     const parent = document.querySelector('#physical-exercises-settings table');
     let tb = parent.createTBody();
     for (const [key, datum] of Object.entries(data)) {
@@ -115,11 +119,14 @@ function drawSelectPhysicalExercisesTable(data) {
         let td = tr.insertCell();
         // td.appendChild(document.createTextNode(datum.name));
 
-        if(datum.status == 1){
+        if (datum.status == 1) {
             td.appendChild(document.createTextNode(datum.private_name));
-            td.classList.add("name-personal");
-        }else{
+            td.classList.add("name-private");
+        } else {
             td.appendChild(document.createTextNode(datum.name));
+            if((datum.status == 3)){
+                td.classList.add("name-confirmed");
+            }
         }
 
         td = tr.insertCell();
@@ -132,12 +139,21 @@ function drawSelectPhysicalExercisesTable(data) {
 
         let togglePosition = datum.user_id ? 'bi-toggle2-on' : 'bi-toggle2-off';
         td.innerHTML = `
-            <form method="POST" id="pe-toggle-${datum.id}" class="form-physical-exercises-toggle" action="/settings/physical-exercises/toggle">
+            <form method="POST" id="pe-toggle-${datum.id}" class="form-physical-exercises-toggle float-start" action="/settings/physical-exercises/toggle">
                 <button class="btn btn-grow btn-confirm-recalculate">
                     <i class="bi ${togglePosition}"></i>
                 </button>
             </form>
         `;
+        if (datum.created_by == datum.user_id) {
+            td.innerHTML += `
+                <a href="/settings/physical-exercises/${datum.id}/edit"
+                   class="btn">
+                    <i class="bi bi bi-pen"></i>
+                </a>
+            `;
+
+        }
     }
     parent.appendChild(tb);
 }

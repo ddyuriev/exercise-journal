@@ -30,7 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
 
     Route::resource('/settings/physical-exercises', PhysicalExerciseController::class, ['as' => 'settings'])->except([
-        'show', 'update', 'destroy'
+        'show', 'destroy'
     ]);
     Route::post('/settings/physical-exercises/toggle', [PhysicalExerciseController::class, 'toggle'])->name('settings.physical-exercises.toggle');
     Route::get('/settings/physical-exercises/search', [PhysicalExerciseController::class, 'search'])->name('settings.physical-exercises.search');

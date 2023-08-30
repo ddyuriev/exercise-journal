@@ -6,7 +6,7 @@ use App\Rules\NameStatusUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class StorePhysicalExercisesRequest extends FormRequest
+class UpdatePhysicalExercisesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,10 +26,9 @@ class StorePhysicalExercisesRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', new NameStatusUnique(request())],
+            'name' => ['required', new NameStatusUnique(request(), $this->route('physical_exercise'))],
             'status' => ['required', 'in:1,2'],
         ];
     }
-
 }
 

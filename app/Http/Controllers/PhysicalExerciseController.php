@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PhysicalExercises\StorePhysicalExercisesRequest;
+use App\Http\Requests\PhysicalExercises\UpdatePhysicalExercisesRequest;
 use App\Models\PhysicalExercise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,37 @@ class PhysicalExerciseController extends Controller
     {
         return view('physical_exercise.create');
     }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function edit($id)
+    {
+        $physicalExercise = PhysicalExercise::find($id);
+        if (!Auth::user()->is_admin) {
+            $physicalExercise->name = $physicalExercise->private_name;
+        }
+
+        return view('physical_exercise.edit', [
+            'physical_exercise' => $physicalExercise
+        ]);
+    }
+
+    public function update(UpdatePhysicalExercisesRequest $request, $id)
+    {
+        $requestData = $request->all();
+
+        $physicalExercise = PhysicalExercise::find($id);
+        $physicalExercise->name = $requestData['status'] == PhysicalExercise::STATUS_PUBLIC ? $requestData['name'] : $requestData['name'] . '_' . substr(hash('sha256', uniqid(mt_rand(), true)), 0, 8);
+        $physicalExercise->private_name = $requestData['name'];
+        $physicalExercise->status = $requestData['status'];
+        $physicalExercise->description = $requestData['description'];
+        $physicalExercise->save();
+
+        return redirect()->route('settings.physical-exercises.index')->with(['alert-type' => 'success', 'message' => __('Physical Exercise Updated')]);
+    }
+
 
     public function store(StorePhysicalExercisesRequest $request)
     {
@@ -143,16 +175,16 @@ class PhysicalExerciseController extends Controller
      */
     private function searchQuery(array $searchData, int $pageNumber = null)
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
-        $physicalExercises = PhysicalExercise::select(DB::raw(
-            'id, name, private_name, status, sub_sel.user_id as user_id, sub_sel.updated_at'
+        $physicalExercisesQuery = PhysicalExercise::select(DB::raw(
+            'id, name, private_name, status, created_by, sub_sel.user_id as user_id, sub_sel.updated_at'
         ))
             ->leftJoin(DB::raw(
                 <<<STR
-            (SELECT *
-            FROM `physical_exercise_user` pe_u
-            WHERE pe_u.user_id = {$userId} ) AS sub_sel
+(SELECT *
+    FROM `physical_exercise_user` pe_u
+    WHERE pe_u.user_id = $user->id ) AS sub_sel
 STR
             ),
                 function ($join) {
@@ -162,14 +194,27 @@ STR
             ->orderBy('sub_sel.updated_at')
             ->orderBy('id');
 
+        /**
+         * hide non confirmed physicalExercises of other users
+         */
+        if (!$user->is_admin) {
+            $physicalExercisesQuery->where(function ($subQuery) use ($user) {
+                $subQuery->where('status', PhysicalExercise::STATUS_CONFIRMED);
+                $subQuery->orWhere(function ($subSubQuery) use ($user) {
+                    $subSubQuery->whereIn('status', [PhysicalExercise::STATUS_PRIVATE, PhysicalExercise::STATUS_PUBLIC])
+                        ->where('created_by', $user->id);
+                });
+            });
+        }
+
         if (!empty($searchData['name'])) {
-            $physicalExercises->where('name', 'like', "%{$searchData['name']}%");
+            $physicalExercisesQuery->where('name', 'like', "%{$searchData['name']}%");
         }
 
         if ($pageNumber) {
-            $result = $physicalExercises->paginate($this->perPage, ['*'], 'page', $pageNumber);
+            $result = $physicalExercisesQuery->paginate($this->perPage, ['*'], 'page', $pageNumber);
         } else {
-            $result = $physicalExercises->paginate($this->perPage);
+            $result = $physicalExercisesQuery->paginate($this->perPage);
         }
         return $result;
     }
