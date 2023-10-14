@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\StringHelper;
+use App\Http\Requests\PhysicalExercises\DestroyPhysicalExercisesRequest;
 use App\Http\Requests\PhysicalExercises\StorePhysicalExercisesRequest;
 use App\Http\Requests\PhysicalExercises\UpdatePhysicalExercisesRequest;
 use App\Models\PhysicalExercise;
@@ -51,7 +53,8 @@ class PhysicalExerciseController extends Controller
     public function edit($id)
     {
         $physicalExercise = PhysicalExercise::find($id);
-        if (!Auth::user()->is_admin) {
+
+        if ($physicalExercise->status == PhysicalExercise::STATUS_PRIVATE) {
             $physicalExercise->name = $physicalExercise->private_name;
         }
 
@@ -60,21 +63,61 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function show($id)
+    {
+        $physicalExercise = PhysicalExercise::find($id);
+
+        //can't view other users records, differents from STATUS_APPROVED
+        if (!$physicalExercise || in_array($physicalExercise->status, [PhysicalExercise::STATUS_PRIVATE, PhysicalExercise::STATUS_IN_MODERATION, PhysicalExercise::STATUS_REJECTED]) && Auth::id() != $physicalExercise->created_by) {
+            abort(404);
+        }
+        if ($physicalExercise->status == PhysicalExercise::STATUS_PRIVATE || $physicalExercise->status == PhysicalExercise::STATUS_REJECTED) {
+            $physicalExercise->name = $physicalExercise->private_name;
+        }
+
+        return view('physical_exercise.show', [
+            'physical_exercise' => $physicalExercise
+        ]);
+    }
+
+    /**
+     * @param UpdatePhysicalExercisesRequest $request
+     * @param $id
+     * @return bool[]|\Illuminate\Http\JsonResponse
+     */
     public function update(UpdatePhysicalExercisesRequest $request, $id)
     {
         $requestData = $request->all();
 
         $physicalExercise = PhysicalExercise::find($id);
-        $physicalExercise->name = $requestData['status'] == PhysicalExercise::STATUS_PUBLIC ? $requestData['name'] : $requestData['name'] . '_' . substr(hash('sha256', uniqid(mt_rand(), true)), 0, 8);
+        $physicalExercise->name = $requestData['status'] == PhysicalExercise::STATUS_IN_MODERATION ? $requestData['name'] : $requestData['name'] . '_' . substr(hash('sha256', uniqid(mt_rand(), true)), 0, 8);
         $physicalExercise->private_name = $requestData['name'];
         $physicalExercise->status = $requestData['status'];
         $physicalExercise->description = $requestData['description'];
-        $physicalExercise->save();
 
-        return redirect()->route('settings.physical-exercises.index')->with(['alert-type' => 'success', 'message' => __('Physical Exercise Updated')]);
+        try {
+            $physicalExercise->save();
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'is_success' => false,
+                'error' => $exception->getMessage()
+            ]);
+        }
+
+        return [
+            'is_success' => true
+        ];
     }
 
 
+    /**
+     * @param StorePhysicalExercisesRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StorePhysicalExercisesRequest $request)
     {
         $requestData = $request->all();
@@ -84,7 +127,7 @@ class PhysicalExerciseController extends Controller
          *  `name` or `private_name` must be present
          */
         $createData = [
-            'name' => $requestData['status'] == PhysicalExercise::STATUS_PUBLIC ? $requestData['name'] : $requestData['name'] . '_' . substr(hash('sha256', uniqid(mt_rand(), true)), 0, 8),
+            'name' => $requestData['status'] == PhysicalExercise::STATUS_IN_MODERATION ? $requestData['name'] : $requestData['name'] . '_' . substr(hash('sha256', uniqid(mt_rand(), true)), 0, 8),
             'private_name' => $requestData['name'],
             'status' => $requestData['status'],
             'description' => $requestData['description'],
@@ -99,7 +142,58 @@ class PhysicalExerciseController extends Controller
 
     /**
      * @param Request $request
-     * @return array
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(DestroyPhysicalExercisesRequest $request, $id)
+    {
+        $data = $request->all();
+
+        $physicalExercise = PhysicalExercise::where('created_by', Auth::id())
+            ->where('id', $id)
+            ->whereIn('status', statusesDifferentFromApproved())
+            ->first();
+
+        if (empty($physicalExercise)) {
+            return response()->json([
+                'is_success' => false
+            ]);
+        }
+
+        $queryStringParsedArray = StringHelper::httpQueryStringParser($data['queryString']);
+
+        $itemsOld = $this->searchQuery($queryStringParsedArray, $queryStringParsedArray['page']);
+
+        try {
+            $physicalExercise->delete();
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'is_success' => false,
+                'error' => $exception->getMessage()
+            ]);
+        }
+
+        $physicalExercises = $this->searchQuery($queryStringParsedArray, $queryStringParsedArray['page']);
+        $isNeedReload = $itemsOld->total() !== 0 && ceil($itemsOld->total() / $this->perPage) != ceil(($itemsOld->total() - 1) / $this->perPage);
+
+        $newQueryString = '';
+        if ($isNeedReload && $queryStringParsedArray['page'] > 1) {
+            $queryStringParsedArray['page'] = $queryStringParsedArray['page'] - 1;
+            $newQueryString = http_build_query($queryStringParsedArray);
+        }
+
+        return response()->json([
+            'is_success' => true,
+            'is_need_reload' => $isNeedReload,
+            'new_query_string' => "?$newQueryString",
+            'items' => $physicalExercises,
+        ]);
+    }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function toggle(Request $request)
     {
@@ -113,38 +207,30 @@ class PhysicalExerciseController extends Controller
             ->pluck('user_id', 'physical_exercise_id')
             ->toArray();
 
-        $page = 1;
-        $output = [];
-        if (!empty($data['queryString']) && !empty($queryStringParsed = parse_url($data['queryString']))) {
-            if (!empty($queryStringParsed['query'])) {
-                parse_str($queryStringParsed['query'], $output);
-                if (!empty($output['page'])) {
-                    $page = $output['page'];
-                }
-            }
-        }
-        $physicalExercises = $this->searchQuery($output, $page);
-        return [
+        $queryStringParsedArr = StringHelper::httpQueryStringParser($data['queryString']);
+        $physicalExercises = $this->searchQuery($queryStringParsedArr, $queryStringParsedArr['page']);
+
+        return response()->json([
             'is_success' => true,
             'items' => [
                 'toggle_position' => array_key_exists($data['physicalExerciseId'], $userPhysicalExercises),
                 'physical_exercises' => $physicalExercises,
             ]
-        ];
+        ]);
     }
 
     /**
      * @param Request $request
      * @return array
      */
-    public function search(Request $request)
+    public function search(string $searchString)
     {
-        $data = $request->all();
+        parse_str($searchString, $data);
 
         $physicalExercises = $this->searchQuery($data, 1);
-        $paginationLinks = (string)$physicalExercises->withQueryString()->onEachSide(1)->links();
-        $paginationLinks = str_replace("/search", "", $paginationLinks);
 
+        $physicalExercises->setPath(route('settings.physical-exercises.index'));
+        $paginationLinks = (string)$physicalExercises->appends('name', $data['name'])->onEachSide(1)->links();
 
         if ($paginationLinks) {
             $dom = new \DOMDocument();
@@ -177,8 +263,15 @@ class PhysicalExerciseController extends Controller
     {
         $user = Auth::user();
 
+        $statusApproved = PhysicalExercise::STATUS_APPROVED;
+
         $physicalExercisesQuery = PhysicalExercise::select(DB::raw(
-            'id, name, private_name, status, created_by, sub_sel.user_id as user_id, sub_sel.updated_at'
+            "id,
+                    case created_by
+                        when status = $statusApproved then name
+                        else private_name
+                    end as name,
+               description, status, created_by, sub_sel.user_id as user_id, sub_sel.updated_at"
         ))
             ->leftJoin(DB::raw(
                 <<<STR
@@ -197,15 +290,13 @@ STR
         /**
          * hide non confirmed physicalExercises of other users
          */
-        if (!$user->is_admin) {
-            $physicalExercisesQuery->where(function ($subQuery) use ($user) {
-                $subQuery->where('status', PhysicalExercise::STATUS_CONFIRMED);
-                $subQuery->orWhere(function ($subSubQuery) use ($user) {
-                    $subSubQuery->whereIn('status', [PhysicalExercise::STATUS_PRIVATE, PhysicalExercise::STATUS_PUBLIC])
-                        ->where('created_by', $user->id);
-                });
+        $physicalExercisesQuery->where(function ($subQuery) use ($user) {
+            $subQuery->where('status', PhysicalExercise::STATUS_APPROVED);
+            $subQuery->orWhere(function ($subSubQuery) use ($user) {
+                $subSubQuery->whereIn('status', [PhysicalExercise::STATUS_PRIVATE, PhysicalExercise::STATUS_IN_MODERATION, PhysicalExercise::STATUS_REJECTED])
+                    ->where('created_by', $user->id);
             });
-        }
+        });
 
         if (!empty($searchData['name'])) {
             $physicalExercisesQuery->where('name', 'like', "%{$searchData['name']}%");

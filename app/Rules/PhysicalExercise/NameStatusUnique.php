@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rules;
+namespace App\Rules\PhysicalExercise;
 
 use App\Models\PhysicalExercise;
 use Illuminate\Contracts\Validation\Rule;
@@ -46,7 +46,7 @@ class NameStatusUnique implements Rule
         if ($requestData['status'] == PhysicalExercise::STATUS_PRIVATE) {
             $this->message = 'Упражнение с таким именем, доступное только для вас, уже существует';
             return empty($physicalExerciseQuery->where('private_name', $value)->where('created_by', Auth::id())->first());
-        } elseif ($requestData['status'] == PhysicalExercise::STATUS_PUBLIC) {
+        } elseif ($requestData['status'] == PhysicalExercise::STATUS_IN_MODERATION) {
             $this->message = 'Упражнение с таким именем, доступное для других пользователей, уже существует';
             return empty($physicalExerciseQuery->where('name', $value)->first());
         } else {

@@ -31,23 +31,39 @@
             </thead>
             <tbody>
             @foreach($physical_exercises as $physical_exercise)
+
+
                 <tr id="tr-{{$physical_exercise['id']}}"
-                    class="bg-gradient @if(!$physical_exercise['user_id']) physical-exercises-unselected @endif">
-                    <td class="@if($physical_exercise['status'] == \App\Models\PhysicalExercise::STATUS_PRIVATE) name-private @elseif($physical_exercise['status'] == \App\Models\PhysicalExercise::STATUS_CONFIRMED) name-confirmed @endif">{{ $physical_exercise['status'] == 1 ? $physical_exercise['private_name'] : $physical_exercise['name']}}</td>
+                    class="@if(!$physical_exercise['user_id']) physical-exercises-unselected @endif">
+                    <td class="@if ($physical_exercise['status'] == PhysicalExercise::STATUS_APPROVED) name-confirmed @endif">
+
+                        @if(in_array($physical_exercise['status'], [PhysicalExercise::STATUS_PRIVATE, PhysicalExercise::STATUS_IN_MODERATION]) )
+                            <a href="{{ route('settings.physical-exercises.edit', $physical_exercise['id']) }}">
+                                {{ $physical_exercise['name']}}
+                            </a>
+                        @else
+                            <a href="{{ route('settings.physical-exercises.show', $physical_exercise['id']) }}">
+                                {{ $physical_exercise['name']}}
+                            </a>
+                        @endif
+                    </td>
                     <td>{{$physical_exercise['description']}}</td>
                     <td class="action-icons text-center">
-                        <form method="POST" id="pe-toggle-{{$physical_exercise['id']}}"
+                        <form id="pe-toggle-{{$physical_exercise['id']}}"
                               class="form-physical-exercises-toggle float-start"
                               action="{{ route('settings.physical-exercises.toggle') }}">
                             <button class="btn btn-grow btn-confirm-recalculate">
                                 <i class="@if($physical_exercise['user_id']) bi bi-toggle2-on @else  bi bi-toggle2-off @endif"></i>
                             </button>
                         </form>
-                        @if($physical_exercise['created_by'] == Auth()->id() && in_array($physical_exercise['status'], [\App\Models\PhysicalExercise::STATUS_PRIVATE, \App\Models\PhysicalExercise::STATUS_PUBLIC]) )
-                            <a href="{{ route('settings.physical-exercises.edit', $physical_exercise['id']) }}"
-                               class="btn">
-                                <i class="bi bi bi-pen"></i>
-                            </a>
+                        @if($physical_exercise['created_by'] == Auth()->id() && in_array($physical_exercise['status'], statusesDifferentFromApproved()) )
+                            <form id="pe-delete-{{$physical_exercise['id']}}"
+                                  class="form-physical-exercises-delete float-start"
+                                  action="{{ route('settings.physical-exercises.destroy', $physical_exercise['id']) }}">
+                                <button class="btn btn-grow btn-confirm-recalculate">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </form>
                         @endif
                     </td>
                 </tr>

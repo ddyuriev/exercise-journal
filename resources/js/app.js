@@ -93,6 +93,7 @@ function settingsTogglePhysicalExercisesEL() {
                     document.querySelector('#physical-exercises-settings table tbody').remove();
                     drawSelectPhysicalExercisesTable(data.items.physical_exercises.data);
                     settingsTogglePhysicalExercisesEL();
+                    settingsDeletePhysicalExercisesEL();
                     window.history.pushState('', '', 'physical-exercises' + queryString);
                 }
             });
@@ -101,6 +102,48 @@ function settingsTogglePhysicalExercisesEL() {
 }
 
 settingsTogglePhysicalExercisesEL();
+
+function settingsDeletePhysicalExercisesEL() {
+    let formPhysicalExercisesDeletes = document.getElementsByClassName('form-physical-exercises-delete');
+    for (const [key, formPhysicalExercisesDelete] of Object.entries(formPhysicalExercisesDeletes)) {
+        formPhysicalExercisesDelete.addEventListener('submit', function (event) {
+            event.preventDefault();
+            let physicalExerciseId = event.target.id.replace('pe-delete-', '');
+
+            let data = {};
+            //url params
+            const queryString = window.location.search;
+            data.queryString = queryString;
+
+            fetch('/settings/physical-exercises/' + physicalExerciseId, {
+                method: 'DELETE',
+                // body: formData,
+                body: JSON.stringify(data),
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    "Content-Type": "application/json"
+                }
+            }).then(response => {
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                if (data.is_success) {
+                    if (data.is_need_reload) {
+                        window.location = window.location.origin + window.location.pathname + data.new_query_string;
+                    } else {
+                        document.querySelector('#physical-exercises-settings table tbody').remove();
+                        drawSelectPhysicalExercisesTable(data.items.data);
+                        settingsTogglePhysicalExercisesEL();
+                        settingsDeletePhysicalExercisesEL();
+                        window.history.pushState('', '', 'physical-exercises' + queryString);
+                    }
+                }
+            });
+        })
+    }
+}
+
+settingsDeletePhysicalExercisesEL();
 
 function drawSelectPhysicalExercisesTable(data) {
 
@@ -119,14 +162,24 @@ function drawSelectPhysicalExercisesTable(data) {
         let td = tr.insertCell();
         // td.appendChild(document.createTextNode(datum.name));
 
-        if (datum.status == 1) {
-            td.appendChild(document.createTextNode(datum.private_name));
-            td.classList.add("name-private");
+        if (datum.status == 1 || datum.status == 2) {
+            td.appendChild(document.createTextNode(''));
+            td.innerHTML += `
+                <a href="/settings/physical-exercises/${datum.id}/edit">
+                    ${datum.name}
+                </a>
+            `;
         } else {
-            td.appendChild(document.createTextNode(datum.name));
-            if((datum.status == 3)){
+            // td.appendChild(document.createTextNode(datum.name));
+            td.appendChild(document.createTextNode(''));
+            if ((datum.status == 3)) {
                 td.classList.add("name-confirmed");
             }
+            td.innerHTML += `
+                <a href="/settings/physical-exercises/${datum.id}">
+                    ${datum.name}
+                </a>
+            `;
         }
 
         td = tr.insertCell();
@@ -139,18 +192,19 @@ function drawSelectPhysicalExercisesTable(data) {
 
         let togglePosition = datum.user_id ? 'bi-toggle2-on' : 'bi-toggle2-off';
         td.innerHTML = `
-            <form method="POST" id="pe-toggle-${datum.id}" class="form-physical-exercises-toggle float-start" action="/settings/physical-exercises/toggle">
+            <form id="pe-toggle-${datum.id}" class="form-physical-exercises-toggle float-start" action="/settings/physical-exercises/toggle">
                 <button class="btn btn-grow btn-confirm-recalculate">
                     <i class="bi ${togglePosition}"></i>
                 </button>
             </form>
         `;
-        if (datum.created_by == datum.user_id) {
+        if (datum.status == 1 || datum.status == 2) {
             td.innerHTML += `
-                <a href="/settings/physical-exercises/${datum.id}/edit"
-                   class="btn">
-                    <i class="bi bi bi-pen"></i>
-                </a>
+                <form id="pe-delete-${datum.id}" class="form-physical-exercises-delete float-start" action="/settings/physical-exercises/${datum.id}">
+                    <button class="btn btn-grow btn-confirm-recalculate">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </form>
             `;
 
         }
@@ -164,7 +218,7 @@ physicalExercisesSettingsSearchInput?.addEventListener('keyup', (event) => {
     let search = physicalExercisesSettingsSearchInput.value;
     if ((searchPrev !== search) && ((search === '') || (search.length > 1))) {
         searchPrev = search;
-        fetch('/settings/physical-exercises/search?' + 'name=' + search, {
+        fetch('/settings/physical-exercises/search/' + 'name=' + search, {
             headers: {
                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 "Content-Type": "application/json",
@@ -178,6 +232,7 @@ physicalExercisesSettingsSearchInput?.addEventListener('keyup', (event) => {
                 document.querySelector('#physical-exercises-settings table tbody').remove();
                 drawSelectPhysicalExercisesTable(data.items.physical_exercises.data);
                 settingsTogglePhysicalExercisesEL();
+                settingsDeletePhysicalExercisesEL();
                 window.history.pushState("Details", "Title", "physical-exercises?name=" + search);
                 document.querySelector('.common-pagination').innerHTML = data.pagination;
             }

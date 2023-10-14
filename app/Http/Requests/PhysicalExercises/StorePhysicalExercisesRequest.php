@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\PhysicalExercises;
 
-use App\Rules\NameStatusUnique;
+use App\Rules\PhysicalExercise\NameStatusUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
 

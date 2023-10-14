@@ -107,6 +107,26 @@ textarea:focus-visible {
     border: none;
 }
 
+.pale-border {
+    border: 1px solid #ced4da70;
+}
+
+
+.textarea {
+
+}
+
+/*begin textarea no scrollbar*/
+.textarea-no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.textarea-no-scrollbar {
+    scrollbar-width: none;
+}
+
+/*end textarea no scrollbar*/
+
 /*end common*/
 
 
@@ -116,13 +136,6 @@ textarea:focus-visible {
 
 .calendar-table .nearby_month {
     color: rgba(128, 128, 128, 0.60);
-}
-
-#physical-exercises-settings table .action-icons {
-    width: 8%;
-}
-#physical-exercises-settings table .action-icons .btn{
-    --bs-btn-padding-x: 0.25rem;
 }
 
 .physical-exercises-unselected {
@@ -220,6 +233,7 @@ textarea:focus-visible {
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #6c757d !important;
 }
+
 .select2-container .select2-selection--single .select2-selection__rendered {
     padding-left: unset !important;
 }
@@ -593,13 +607,25 @@ body:has(.side-menu:checked) {
     color: var(--dark-gray);
 }
 
-#physical-exercises-settings .name-private {
-    color: green;
-    font-style: italic;
+
+#physical-exercises-settings a {
+    color: unset;
 }
 
-#physical-exercises-settings .name-confirmed {
+#physical-exercises-settings .name-confirmed a {
     color: darkgoldenrod;
+}
+
+#physical-exercises-settings .physical-exercises-unselected .name-confirmed a {
+    color: rgba(184, 134, 11, 0.7);
+}
+
+#physical-exercises-settings table .action-icons .btn {
+    --bs-btn-padding-x: 0.25rem;
+}
+
+#physical-exercises-settings table .action-icons {
+    padding-top: unset;
 }
 
 /* end physicalExercisesIndex*/
@@ -645,5 +671,6 @@ option {
 .select2-container--default .select2-selection--single {
     border: 1px solid #ced4da !important;
 }
+
 /*end select */
 /*end create PhysicalExercise*/

@@ -29,11 +29,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
 
-    Route::resource('/settings/physical-exercises', PhysicalExerciseController::class, ['as' => 'settings'])->except([
-        'show', 'destroy'
-    ]);
+    Route::resource('/settings/physical-exercises', PhysicalExerciseController::class, ['as' => 'settings']);
     Route::post('/settings/physical-exercises/toggle', [PhysicalExerciseController::class, 'toggle'])->name('settings.physical-exercises.toggle');
-    Route::get('/settings/physical-exercises/search', [PhysicalExerciseController::class, 'search'])->name('settings.physical-exercises.search');
+    Route::get('/settings/physical-exercises/search/{searchString}', [PhysicalExerciseController::class, 'search'])->name('settings.physical-exercises.search');
 
     Route::get('/day/{date}', [UserPhysicalExerciseController::class, 'view'])->name('user-physical-exercises.view');
     Route::post('/day/user-physical-exercises', [UserPhysicalExerciseController::class, 'store'])->name('user-physical-exercises.create');

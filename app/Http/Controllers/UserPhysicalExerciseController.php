@@ -6,10 +6,11 @@ use App\Helpers\StringHelper;
 use App\Http\Requests\UserPhysicalExercises\StoreUserPhysicalExercisesRequest;
 use App\Http\Requests\UserPhysicalExercises\DestroyUserPhysicalExercisesRequest;
 use App\Http\Requests\UserPhysicalExercises\UpdateUserPhysicalExercisesRequest;
-use App\Models\User;
+use App\Models\PhysicalExercise;
 use App\Models\UserPhysicalExercise;
 use App\Services\UserPhysicalExerciseService;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -48,10 +49,8 @@ class UserPhysicalExerciseController extends Controller
      */
     public function view($date, Request $request)
     {
-        $physicalExercises = User::where('id', Auth::id())
-            ->with('physicalExercises')
-            ->first()
-            ->physicalExercises
+        $physicalExercises = PhysicalExercise::where('created_by', Auth::id())
+            ->orWhere('status', PhysicalExercise::STATUS_APPROVED)
             ->pluck('name', 'id');
 
         $physicalExercises->prepend('выберите упражнение', 0);
@@ -100,10 +99,8 @@ class UserPhysicalExerciseController extends Controller
 
         UserPhysicalExercise::create($createData);
 
-        $parsedQueryStringArr = StringHelper::parseQueryString($data['queryString']);
-        $page = !empty($parsedQueryStringArr['page']) ? $parsedQueryStringArr['page'] : 1;
-
-        $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $page);
+        $queryStringParsedArr = StringHelper::httpQueryStringParser($data['queryString']);
+        $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $queryStringParsedArr['page']);
 
         $isNeedReload = $itemsOldCount !== 0 && ceil($itemsOldCount / $this->perPage) != ceil(($itemsOldCount + 1) / $this->perPage);
         return response()->json([
@@ -136,10 +133,8 @@ class UserPhysicalExerciseController extends Controller
             ->where('user_id', Auth::id())
             ->update($insertData);
 
-        $parsedQueryStringArr = StringHelper::parseQueryString($data['queryString']);
-        $page = !empty($parsedQueryStringArr['page']) ? $parsedQueryStringArr['page'] : 1;
-
-        $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $page);
+        $queryStringParsedArr = StringHelper::httpQueryStringParser($data['queryString']);
+        $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $queryStringParsedArr['page']);
 
         return response()->json([
             'is_success' => true,
@@ -157,10 +152,10 @@ class UserPhysicalExerciseController extends Controller
     {
         $data = $request->all();
 
-        $userPhysicalExercises = UserPhysicalExercise::where('user_id', Auth::id())
+        $userPhysicalExercise = UserPhysicalExercise::where('user_id', Auth::id())
             ->where('id', $id)->first();
 
-        if (empty($userPhysicalExercises)) {
+        if (empty($userPhysicalExercise)) {
             return response()->json([
                 'is_success' => false
             ]);
@@ -169,7 +164,7 @@ class UserPhysicalExerciseController extends Controller
         $itemsOldCount = $this->getRemainder();
 
         try {
-            $userPhysicalExercises->delete();
+            $userPhysicalExercise->delete();
         } catch (\Throwable $exception) {
             return response()->json([
                 'is_success' => false,
@@ -177,10 +172,8 @@ class UserPhysicalExerciseController extends Controller
         }
         $this->updateIntradayKeys($this->date);
 
-        $parsedQueryStringArr = StringHelper::parseQueryString($data['queryString']);
-        $page = !empty($parsedQueryStringArr['page']) ? $parsedQueryStringArr['page'] : 1;
-
-        $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $page);
+        $queryStringParsedArr = StringHelper::httpQueryStringParser($data['queryString']);
+        $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $queryStringParsedArr['page']);
 
         $isNeedReload = $itemsOldCount !== 1 && ceil($itemsOldCount / $this->perPage) != ceil(($itemsOldCount - 1) / $this->perPage);
         return response()->json([
@@ -208,8 +201,9 @@ class UserPhysicalExerciseController extends Controller
 
     /**
      * @param $date
+     * @return \Illuminate\Http\JsonResponse
      */
-    private function updateIntradayKeys($date)
+    private function updateIntradayKeys($date): JsonResponse
     {
         $currentKeys = UserPhysicalExercise::where('user_id', Auth::id())
             ->where('created_at', '>=', $date->startOfDay())
@@ -230,12 +224,22 @@ class UserPhysicalExerciseController extends Controller
         }
 
         if ($caseStr && $currentKeysIdsStr) {
-            DB::update("UPDATE user_physical_exercises SET intraday_key =
+            try {
+                DB::update("UPDATE user_physical_exercises SET intraday_key =
                         (CASE
                             $caseStr
                          END)
             WHERE id IN ($currentKeysIdsStr)");
+            } catch (\Throwable $exception) {
+                return response()->json([
+                    'is_success' => false,
+                ]);
+            }
         }
+
+        return response()->json([
+            'is_success' => true,
+        ]);
     }
 
     /**

@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->text('description')->nullable()->index();
             $table->boolean('status');
             $table->unsignedInteger('created_by');
+            $table->unsignedInteger('moderated_by')->nullable();
             $table->timestamps();
         });
 

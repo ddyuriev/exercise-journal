@@ -2,30 +2,31 @@
 
 namespace App\Helpers;
 
-
 class StringHelper
 {
     /**
-     * @param string|null $queryString
-     * @return array|mixed
+     * @return string
      */
-    public static function parseQueryString(?string $queryString)
+    public static function randomColor(): string
     {
-        try {
-            $queryStringParsed = parse_url($queryString);
-            parse_str($queryStringParsed['query'], $result);
-        } catch (\Throwable $exception) {
-            return [];
-        }
-
-        return $result;
+        return '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
     }
 
     /**
-     * @return string
+     * @param string $queryString
+     * @return array
      */
-    public static function randomColor()
+    public static function httpQueryStringParser(?string $queryString): array
     {
-        return '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
+        $queryStringParsedArray = [];
+        if (!empty($queryString) && !empty($queryStringParsed = parse_url($queryString))) {
+            if (!empty($queryStringParsed['query'])) {
+                parse_str($queryStringParsed['query'], $queryStringParsedArray);
+            }
+        }
+        if (empty($queryStringParsedArray['page'])) {
+            $queryStringParsedArray['page'] = 1;
+        }
+        return $queryStringParsedArray;
     }
 }
