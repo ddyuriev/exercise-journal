@@ -16,9 +16,9 @@
                         class="form-control select2 without-search @error('status') is-invalid @enderror">
                     <option value="" disabled selected>Статус</option>
                     <option value="1"
-                            @if(old('status', $physical_exercise->status) == 1) selected @endif>{{physicalExerciseIntToName(PhysicalExercise::STATUS_PRIVATE)}}</option>
+                            @if(old('status', $physical_exercise->status) == PhysicalExercise::STATUS_PRIVATE) selected @endif>{{physicalExerciseIntToName(PhysicalExercise::STATUS_PRIVATE)}}</option>
                     <option value="2"
-                            @if(old('status', $physical_exercise->status) == 2) selected @endif>{{physicalExerciseIntToName(PhysicalExercise::STATUS_IN_MODERATION)}}</option>
+                            @if(old('status', $physical_exercise->status) == PhysicalExercise::STATUS_IN_MODERATION) selected @endif>{{physicalExerciseIntToName(PhysicalExercise::STATUS_IN_MODERATION)}}</option>
                 </select>
             </div>
             <div class="mb-3 text-left">
@@ -49,10 +49,12 @@
                 }).then(data => {
                     console.log(data);
                     if (data.is_success) {
-                        console.log('saved');
+                        toastifyNotification('success', 'сохранено');
                     } else {
-                        console.log('error');
                         console.log(data.errors);
+                        for (const [key, val] of Object.entries(data.errors)) {
+                            toastifyNotification('error', val);
+                        }
                     }
                 });
             });

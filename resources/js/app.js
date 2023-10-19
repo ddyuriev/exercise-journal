@@ -24,6 +24,8 @@ if (Object.keys(textareasPET).length) {
 
 import Chart from 'chart.js/auto';
 
+import Toastify from 'toastify-js'
+
 //Добавление user_physical_exercises через select2
 $('#select-physical_exercise').on('select2:select', function (e) {
     createUserPhysicalExercise(e.target.value);
@@ -582,3 +584,38 @@ function drawChart(labelsObj, statisticsObj, colorsObj) {
 $(".without-search").select2({
     minimumResultsForSearch: Infinity
 });
+
+
+window.toastifyNotification = function (type, message) {
+    let background;
+    switch (type) {
+        case 'success':
+            background = "linear-gradient(to bottom, #4fb567, #4fb568)"
+            break;
+        case 'error':
+            background = "linear-gradient(to bottom, #df5967, #df5968)"
+            break;
+    }
+    Toastify({
+        text: message,
+        duration: 3000,
+        newWindow: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+            'background': background,
+            'color': 'white',
+            'padding': '1rem',
+            'border-top-right-radius': '0.3rem',
+            'border-top-left-radius': '0.3rem',
+            'border-bottom-right-radius': '0.3rem',
+            'border-bottom-left-radius': '0.3rem',
+            'min-width': '10rem',
+            'text-align': 'center',
+            'font-family': '"Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"',
+        },
+        onClick: function () {
+        } // Callback after click
+    }).showToast();
+}

@@ -18,6 +18,7 @@ export default defineConfig({
             '~bootstrap-icons' : path.resolve(__dirname, 'node_modules/bootstrap-icons'),
             '~textarea-autosize' : path.resolve(__dirname, 'node_modules/textarea-autosize'),
             '~chart.js' : path.resolve(__dirname, 'node_modules/chart.js'),
+            '~toastify' : path.resolve(__dirname, 'node_modules/toastify-js/src/toastify.css'),
         }
     }
 });

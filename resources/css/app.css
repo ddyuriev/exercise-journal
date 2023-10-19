@@ -2,6 +2,9 @@
 @import "~select2-bootstrap-5-theme";
 @import "~bootstrap-icons";
 
+/*@import "toastify-js/src/toastify.css";*/
+@import "~toastify";
+
 /*begin common*/
 body {
     /*font-family: "Lato", Arial, sans-serif;*/
