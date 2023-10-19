@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\StringHelper;
-use App\Http\Requests\UserPhysicalExercises\StoreUserPhysicalExercisesRequest;
-use App\Http\Requests\UserPhysicalExercises\DestroyUserPhysicalExercisesRequest;
-use App\Http\Requests\UserPhysicalExercises\UpdateUserPhysicalExercisesRequest;
+use App\Http\Requests\UserPhysicalExercises\StoreUserPhysicalExerciseRequest;
+use App\Http\Requests\UserPhysicalExercises\DestroyUserPhysicalExerciseRequest;
+use App\Http\Requests\UserPhysicalExercises\UpdateUserPhysicalExerciseRequest;
 use App\Models\PhysicalExercise;
 use App\Models\UserPhysicalExercise;
 use App\Services\UserPhysicalExerciseService;
@@ -75,10 +75,10 @@ class UserPhysicalExerciseController extends Controller
     }
 
     /**
-     * @param StoreUserPhysicalExercisesRequest $request
+     * @param StoreUserPhysicalExerciseRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreUserPhysicalExercisesRequest $request)
+    public function store(StoreUserPhysicalExerciseRequest $request)
     {
         $data = $request->all();
 
@@ -114,10 +114,10 @@ class UserPhysicalExerciseController extends Controller
 
     /**
      * @param $id
-     * @param UpdateUserPhysicalExercisesRequest $request
+     * @param UpdateUserPhysicalExerciseRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update($id, UpdateUserPhysicalExercisesRequest $request)
+    public function update($id, UpdateUserPhysicalExerciseRequest $request)
     {
         $data = $request->all();
 
@@ -145,10 +145,10 @@ class UserPhysicalExerciseController extends Controller
 
     /**
      * @param $id
-     * @param DestroyUserPhysicalExercisesRequest $request
+     * @param DestroyUserPhysicalExerciseRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id, DestroyUserPhysicalExercisesRequest $request)
+    public function destroy($id, DestroyUserPhysicalExerciseRequest $request)
     {
         $data = $request->all();
 

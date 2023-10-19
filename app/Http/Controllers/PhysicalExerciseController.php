@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\StringHelper;
-use App\Http\Requests\PhysicalExercises\DestroyPhysicalExercisesRequest;
-use App\Http\Requests\PhysicalExercises\StorePhysicalExercisesRequest;
-use App\Http\Requests\PhysicalExercises\UpdatePhysicalExercisesRequest;
+use App\Http\Requests\PhysicalExercises\DestroyPhysicalExerciseRequest;
+use App\Http\Requests\PhysicalExercises\StorePhysicalExerciseRequest;
+use App\Http\Requests\PhysicalExercises\UpdatePhysicalExerciseRequest;
 use App\Models\PhysicalExercise;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -85,11 +85,11 @@ class PhysicalExerciseController extends Controller
     }
 
     /**
-     * @param UpdatePhysicalExercisesRequest $request
+     * @param UpdatePhysicalExerciseRequest $request
      * @param $id
      * @return bool[]|\Illuminate\Http\JsonResponse
      */
-    public function update(UpdatePhysicalExercisesRequest $request, $id)
+    public function update(UpdatePhysicalExerciseRequest $request, $id)
     {
         $requestData = $request->all();
 
@@ -115,10 +115,10 @@ class PhysicalExerciseController extends Controller
 
 
     /**
-     * @param StorePhysicalExercisesRequest $request
+     * @param StorePhysicalExerciseRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(StorePhysicalExercisesRequest $request)
+    public function store(StorePhysicalExerciseRequest $request)
     {
         $requestData = $request->all();
 
@@ -145,7 +145,7 @@ class PhysicalExerciseController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(DestroyPhysicalExercisesRequest $request, $id)
+    public function destroy(DestroyPhysicalExerciseRequest $request, $id)
     {
         $data = $request->all();
 

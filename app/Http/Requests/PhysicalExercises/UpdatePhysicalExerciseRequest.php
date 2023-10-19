@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\PhysicalExercises;
 
+use App\Rules\PhysicalExercise\NameStatusUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
-class DestroyPhysicalExercisesRequest extends FormRequest
+
+class UpdatePhysicalExerciseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,12 +19,15 @@ class DestroyPhysicalExercisesRequest extends FormRequest
     }
 
     /**
-     * @return \string[][]
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, mixed>
      */
     public function rules()
     {
         return [
-            'queryString' => ['string'],
+            'name' => ['required', new NameStatusUnique(request(), $this->route('physical_exercise'))],
+            'status' => ['required', 'in:1,2'],
         ];
     }
 }

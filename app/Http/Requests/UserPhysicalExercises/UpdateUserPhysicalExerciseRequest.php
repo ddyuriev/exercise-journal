@@ -5,7 +5,7 @@ namespace App\Http\Requests\UserPhysicalExercises;
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class DestroyUserPhysicalExercisesRequest extends FormRequest
+class UpdateUserPhysicalExerciseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,8 @@ class DestroyUserPhysicalExercisesRequest extends FormRequest
     public function rules()
     {
         return [
-            'date' => ['required', 'date']
+            'count' => ['integer', 'min:0'],
+            'comment' => ['string', 'nullable']
         ];
     }
 }

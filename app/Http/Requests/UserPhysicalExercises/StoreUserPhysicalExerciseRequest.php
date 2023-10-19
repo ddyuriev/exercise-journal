@@ -5,7 +5,7 @@ namespace App\Http\Requests\UserPhysicalExercises;
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class UpdateUserPhysicalExercisesRequest extends FormRequest
+class StoreUserPhysicalExerciseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,7 @@ class UpdateUserPhysicalExercisesRequest extends FormRequest
     public function rules()
     {
         return [
-            'count' => ['integer', 'min:0'],
-            'comment' => ['string', 'nullable']
+            'physicalExerciseId' => ['required', 'exists:App\Models\PhysicalExercise,id']
         ];
     }
 }

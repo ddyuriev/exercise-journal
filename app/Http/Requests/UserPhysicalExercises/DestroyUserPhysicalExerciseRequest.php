@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Requests\PhysicalExercises;
+namespace App\Http\Requests\UserPhysicalExercises;
 
-use App\Rules\PhysicalExercise\NameStatusUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class StorePhysicalExercisesRequest extends FormRequest
+class DestroyUserPhysicalExerciseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,10 +25,7 @@ class StorePhysicalExercisesRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', new NameStatusUnique(request())],
-            'status' => ['required', 'in:1,2'],
+            'date' => ['required', 'date']
         ];
     }
-
 }
-
