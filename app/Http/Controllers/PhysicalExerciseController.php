@@ -237,29 +237,7 @@ class PhysicalExerciseController extends Controller
      */
     public function search(string $searchString)
     {
-
-        /**/
-        $time = time();
-        $timeFormatted =date('G', $time) . '-' . date('i', $time) . '-' . date('s', $time);
-        $debugFile = 'debug1111111-search-$searchString' . "-$timeFormatted.txt";
-        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
-        $new = print_r($searchString, true);
-        isset($current) ? $current .= "\r\n" . $new : $current = $new;
-        file_put_contents($debugFile, $current);
-        /**/
-
         parse_str($searchString, $data);
-
-
-        /**/
-        $time = time();
-        $timeFormatted =date('G', $time) . '-' . date('i', $time) . '-' . date('s', $time);
-        $debugFile = 'debug1111111-search-$data' . "-$timeFormatted.txt";
-        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
-        $new = print_r($data, true);
-        isset($current) ? $current .= "\r\n" . $new : $current = $new;
-        file_put_contents($debugFile, $current);
-        /**/
 
         $physicalExercises = $this->searchQuery($data, 1);
 
