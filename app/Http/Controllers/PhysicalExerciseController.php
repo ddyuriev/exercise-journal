@@ -7,6 +7,7 @@ use App\Http\Requests\PhysicalExercises\DestroyPhysicalExerciseRequest;
 use App\Http\Requests\PhysicalExercises\StorePhysicalExerciseRequest;
 use App\Http\Requests\PhysicalExercises\UpdatePhysicalExerciseRequest;
 use App\Models\PhysicalExercise;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,17 @@ class PhysicalExerciseController extends Controller
     public function index(Request $request)
     {
         $data = $request->all();
+
+        /**/
+        $time = time();
+        $timeFormatted =date('G', $time) . '-' . date('i', $time) . '-' . date('s', $time);
+        $debugFile = 'debug1111111-index-$data' . "-$timeFormatted.txt";
+        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
+        $new = print_r($data, true);
+        isset($current) ? $current .= "\r\n" . $new : $current = $new;
+        file_put_contents($debugFile, $current);
+        /**/
+
         return view('physical_exercise.index', [
             'physical_exercises' => $this->searchQuery($data),
         ]);
@@ -225,7 +237,29 @@ class PhysicalExerciseController extends Controller
      */
     public function search(string $searchString)
     {
+
+        /**/
+        $time = time();
+        $timeFormatted =date('G', $time) . '-' . date('i', $time) . '-' . date('s', $time);
+        $debugFile = 'debug1111111-search-$searchString' . "-$timeFormatted.txt";
+        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
+        $new = print_r($searchString, true);
+        isset($current) ? $current .= "\r\n" . $new : $current = $new;
+        file_put_contents($debugFile, $current);
+        /**/
+
         parse_str($searchString, $data);
+
+
+        /**/
+        $time = time();
+        $timeFormatted =date('G', $time) . '-' . date('i', $time) . '-' . date('s', $time);
+        $debugFile = 'debug1111111-search-$data' . "-$timeFormatted.txt";
+        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
+        $new = print_r($data, true);
+        isset($current) ? $current .= "\r\n" . $new : $current = $new;
+        file_put_contents($debugFile, $current);
+        /**/
 
         $physicalExercises = $this->searchQuery($data, 1);
 
@@ -299,7 +333,10 @@ STR
         });
 
         if (!empty($searchData['name'])) {
-            $physicalExercisesQuery->where('name', 'like', "%{$searchData['name']}%");
+            $physicalExercisesQuery->where(function (Builder $query) use ($searchData) {
+                $query->where('name', 'like', "{$searchData['name']}%")
+                    ->orWhere('private_name', 'like', "{$searchData['name']}%");
+            });
         }
 
         if ($pageNumber) {

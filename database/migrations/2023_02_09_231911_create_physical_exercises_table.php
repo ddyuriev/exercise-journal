@@ -14,13 +14,14 @@ return new class extends Migration {
     {
         Schema::create('physical_exercises', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique()->index();
-            $table->string('private_name')->index();
-            $table->text('description')->nullable()->index();
+            $table->string('name')->unique();
+            $table->string('private_name');
+            $table->text('description')->nullable();
             $table->boolean('status');
             $table->unsignedInteger('created_by');
             $table->unsignedInteger('moderated_by')->nullable();
             $table->timestamps();
+            $table->index(['private_name', 'name']);
         });
 
         Schema::create('physical_exercise_user', function (Blueprint $table) {
