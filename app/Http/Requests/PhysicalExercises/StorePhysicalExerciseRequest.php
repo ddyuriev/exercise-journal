@@ -25,9 +25,10 @@ class StorePhysicalExerciseRequest extends FormRequest
      */
     public function rules()
     {
+        $editablePhysicalExercises = implode(',', editablePhysicalExercises());
         return [
             'name' => ['required', new NameStatusUnique(request())],
-            'status' => ['required', 'in:1,2'],
+            'status' => ['required', "in:$editablePhysicalExercises"],
         ];
     }
 

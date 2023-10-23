@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\PhysicalExercises;
 
-use App\Rules\PhysicalExercise\NameStatusUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
 
-class UpdatePhysicalExerciseRequest extends FormRequest
+class TogglePhysicalExerciseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +24,10 @@ class UpdatePhysicalExerciseRequest extends FormRequest
      */
     public function rules()
     {
-        $editablePhysicalExercises = implode(',', editablePhysicalExercises());
         return [
-            'name' => ['required', new NameStatusUnique(request(), $this->route('physical_exercise'))],
-            'status' => ['required', "in:$editablePhysicalExercises"],
+            'physicalExerciseId' => ['exists:App\Models\PhysicalExercise,id'],
         ];
     }
+
 }
 

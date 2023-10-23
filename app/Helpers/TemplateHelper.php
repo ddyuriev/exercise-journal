@@ -24,3 +24,13 @@ if (!function_exists('statusesDifferentFromApproved')) {
         ];
     }
 }
+
+if (!function_exists('editablePhysicalExercises')) {
+    function editablePhysicalExercises()
+    {
+        return [
+            PhysicalExercise::STATUS_PRIVATE,
+            PhysicalExercise::STATUS_IN_MODERATION,
+        ];
+    }
+}

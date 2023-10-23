@@ -84,7 +84,8 @@ function settingsTogglePhysicalExercisesEL() {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             }).then(response => {
                 return response.json();
@@ -97,6 +98,10 @@ function settingsTogglePhysicalExercisesEL() {
                     settingsTogglePhysicalExercisesEL();
                     settingsDeletePhysicalExercisesEL();
                     window.history.pushState('', '', 'physical-exercises' + queryString);
+                } else {
+                    for (const [key, val] of Object.entries(data.errors)) {
+                        toastifyNotification('error', val);
+                    }
                 }
             });
         })
