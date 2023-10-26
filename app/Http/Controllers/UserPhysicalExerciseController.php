@@ -49,8 +49,10 @@ class UserPhysicalExerciseController extends Controller
      */
     public function view($date, Request $request)
     {
+        //the limit is due to the use of the list of items in select2 component
         $physicalExercises = PhysicalExercise::where('created_by', Auth::id())
             ->orWhere('status', PhysicalExercise::STATUS_APPROVED)
+            ->take(env('USER_PHYSICAL_EXERCISES_LIMIT', 5000))
             ->pluck('name', 'id');
 
         $physicalExercises->prepend('выберите упражнение', 0);
@@ -106,7 +108,7 @@ class UserPhysicalExerciseController extends Controller
         return response()->json([
             'is_success' => true,
             'is_need_reload' => $isNeedReload,
-            'page_correction' => $isNeedReload ? $page + 1 : 0,
+            'page_correction' => $isNeedReload ? $queryStringParsedArr['page'] + 1 : 0,
             'items' => $userPhysicalExercises,
         ]);
 
@@ -179,7 +181,7 @@ class UserPhysicalExerciseController extends Controller
         return response()->json([
             'is_success' => true,
             'is_need_reload' => $isNeedReload,
-            'page_correction' => $isNeedReload ? $page - 1 : 0,
+            'page_correction' => $isNeedReload ? $queryStringParsedArr['page'] - 1 : 0,
             'items' => $userPhysicalExercises
         ]);
     }
