@@ -16,5 +16,4 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/database/seeders/UserSeeder.php
-/app/Console/Commands/TestPrivate.php
+/app/Console/Commands/Private*.php
