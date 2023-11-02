@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 
 class PhysicalExerciseController extends Controller
 {
@@ -90,7 +91,7 @@ class PhysicalExerciseController extends Controller
     /**
      * @param UpdatePhysicalExerciseRequest $request
      * @param $id
-     * @return bool[]|\Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(UpdatePhysicalExerciseRequest $request, $id)
     {
@@ -111,9 +112,9 @@ class PhysicalExerciseController extends Controller
             ]);
         }
 
-        return [
-            'is_success' => true
-        ];
+        return response()->json([
+            'is_success' => true,
+        ]);
     }
 
 
@@ -144,9 +145,9 @@ class PhysicalExerciseController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param DestroyPhysicalExerciseRequest $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(DestroyPhysicalExerciseRequest $request, $id)
     {
@@ -196,7 +197,7 @@ class PhysicalExerciseController extends Controller
 
     /**
      * @param TogglePhysicalExerciseRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function toggle(TogglePhysicalExerciseRequest $request)
     {
@@ -223,8 +224,8 @@ class PhysicalExerciseController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return array
+     * @param string $searchString
+     * @return JsonResponse
      */
     public function search(string $searchString)
     {
@@ -248,13 +249,13 @@ class PhysicalExerciseController extends Controller
         } else {
             $pagination = '';
         }
-        return [
+        return response()->json([
             'is_success' => true,
             'items' => [
                 'physical_exercises' => $physicalExercises,
             ],
             'pagination' => $pagination
-        ];
+        ]);
     }
 
     /**

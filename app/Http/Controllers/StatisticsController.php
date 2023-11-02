@@ -19,7 +19,7 @@ class StatisticsController extends Controller
 
     /**
      * @param StatisticsRequest $request
-     * @return array|bool[]|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
      */
     public function index(StatisticsRequest $request)
     {
@@ -28,7 +28,7 @@ class StatisticsController extends Controller
         $resultData = ['data' => $statistics];
 
         if ($request->ajax()) {
-            return array_merge($resultData, ['is_success' => true]);
+            return response()->json(array_merge($resultData, ['is_success' => true]));
         } else {
             return view('statistics.index', $resultData);
         }

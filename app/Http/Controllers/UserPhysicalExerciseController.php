@@ -78,7 +78,7 @@ class UserPhysicalExerciseController extends Controller
 
     /**
      * @param StoreUserPhysicalExerciseRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(StoreUserPhysicalExerciseRequest $request)
     {
@@ -117,7 +117,7 @@ class UserPhysicalExerciseController extends Controller
     /**
      * @param $id
      * @param UpdateUserPhysicalExerciseRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update($id, UpdateUserPhysicalExerciseRequest $request)
     {
@@ -148,7 +148,7 @@ class UserPhysicalExerciseController extends Controller
     /**
      * @param $id
      * @param DestroyUserPhysicalExerciseRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy($id, DestroyUserPhysicalExerciseRequest $request)
     {
@@ -203,7 +203,7 @@ class UserPhysicalExerciseController extends Controller
 
     /**
      * @param $date
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     private function updateIntradayKeys($date): JsonResponse
     {
