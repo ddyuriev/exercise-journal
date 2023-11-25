@@ -15,7 +15,7 @@
         <div class="col-md-4 mt-2">
             <div class="row">
                 <div class="col-sm-12">
-                    <input type="text" name="search" class="form-control search-input" value="{{request('name') }}"
+                    <input type="text" name="search" class="form-control search-input" value="{{request('search_query') }}"
                            placeholder="{{__('Search')}}"/>
                 </div>
             </div>

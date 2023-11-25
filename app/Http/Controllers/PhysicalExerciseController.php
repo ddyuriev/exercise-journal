@@ -229,12 +229,13 @@ class PhysicalExerciseController extends Controller
      */
     public function search(string $searchString)
     {
+        $searchString = str_replace('&', '%26', $searchString);
         parse_str($searchString, $data);
 
         $physicalExercises = $this->searchQuery($data, 1);
 
         $physicalExercises->setPath(route('settings.physical-exercises.index'));
-        $paginationLinks = (string)$physicalExercises->appends('name', $data['name'])->onEachSide(1)->links();
+        $paginationLinks = (string)$physicalExercises->appends('search_query', $data['search_query'])->onEachSide(1)->links();
 
         if ($paginationLinks) {
             $dom = new \DOMDocument();
@@ -254,6 +255,7 @@ class PhysicalExerciseController extends Controller
             'items' => [
                 'physical_exercises' => $physicalExercises,
             ],
+            'search' => $data['search_query'],
             'pagination' => $pagination
         ]);
     }
@@ -302,10 +304,10 @@ STR
             });
         });
 
-        if (!empty($searchData['name'])) {
+        if (!empty($searchData['search_query'])) {
             $physicalExercisesQuery->where(function (Builder $query) use ($searchData) {
-                $query->where('name', 'like', "{$searchData['name']}%")
-                    ->orWhere('private_name', 'like', "{$searchData['name']}%");
+                $query->where('name', 'like', "{$searchData['search_query']}%")
+                    ->orWhere('private_name', 'like', "{$searchData['search_query']}%");
             });
         }
 

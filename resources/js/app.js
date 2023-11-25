@@ -154,7 +154,7 @@ settingsDeletePhysicalExercisesEL();
 
 function drawSelectPhysicalExercisesTable(data) {
 
-    console.log('data');
+    console.log('drawSelectPhysicalExercisesTable - data');
     console.log(data);
 
     const parent = document.querySelector('#physical-exercises-settings table');
@@ -220,12 +220,16 @@ function drawSelectPhysicalExercisesTable(data) {
 }
 
 let physicalExercisesSettingsSearchInput = document.querySelector('#physical-exercises-settings .search-input');
-let searchPrev = '';
+let searchStringPrev = '';
 physicalExercisesSettingsSearchInput?.addEventListener('keyup', (event) => {
-    let search = physicalExercisesSettingsSearchInput.value;
-    if ((searchPrev !== search) && ((search === '') || (search.length > 1))) {
-        searchPrev = search;
-        fetch('/settings/physical-exercises/search/' + 'name=' + search, {
+    let searchString = physicalExercisesSettingsSearchInput.value;
+
+    console.log('searchString');
+    console.log(searchString);
+
+    if ((searchStringPrev !== searchString) && ((searchString === '') || (searchString.length > 1))) {
+        searchStringPrev = searchString;
+        fetch('/settings/physical-exercises/search/' + 'search_query=' + searchString, {
             headers: {
                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 "Content-Type": "application/json",
@@ -234,16 +238,18 @@ physicalExercisesSettingsSearchInput?.addEventListener('keyup', (event) => {
         }).then(response => {
             return response.json();
         }).then(data => {
+            console.log('data');
             console.log(data);
             if (data.is_success) {
                 document.querySelector('#physical-exercises-settings table tbody').remove();
                 drawSelectPhysicalExercisesTable(data.items.physical_exercises.data);
                 settingsTogglePhysicalExercisesEL();
                 settingsDeletePhysicalExercisesEL();
-                window.history.pushState("Details", "Title", "physical-exercises?name=" + search);
+                window.history.pushState("Details", "Title", "physical-exercises?search_query=" + data.search.replace("&", '%26'));
                 document.querySelector('.common-pagination').innerHTML = data.pagination;
             }
         });
+
     }
 });
 
