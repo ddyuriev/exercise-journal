@@ -108,7 +108,7 @@ class PhysicalExerciseController extends Controller
         } catch (\Throwable $exception) {
             return response()->json([
                 'is_success' => false,
-                'error' => $exception->getMessage()
+                'errors' => [$exception->getMessage()]
             ]);
         }
 
@@ -120,7 +120,7 @@ class PhysicalExerciseController extends Controller
 
     /**
      * @param StorePhysicalExerciseRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return JsonResponse|\Illuminate\Http\RedirectResponse
      */
     public function store(StorePhysicalExerciseRequest $request)
     {
@@ -138,10 +138,20 @@ class PhysicalExerciseController extends Controller
             'created_by' => Auth::id(),
         ];
 
-        $physicalExercise = PhysicalExercise::create($createData);
-        Auth::user()->physicalExercises()->attach([$physicalExercise->id]);
+        try {
+            $physicalExercise = PhysicalExercise::create($createData);
+            Auth::user()->physicalExercises()->attach([$physicalExercise->id]);
 
-        return redirect()->route('settings.physical-exercises.index')->with(['alert-type' => 'success', 'message' => __('Physical Exercise Created')]);
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'is_success' => false,
+                'errors' => [$exception->getMessage()]
+            ]);
+        }
+
+        return response()->json([
+            'is_success' => true,
+        ]);
     }
 
     /**
