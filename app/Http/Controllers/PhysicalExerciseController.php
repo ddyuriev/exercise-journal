@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class PhysicalExerciseController extends Controller
 {
@@ -181,9 +182,10 @@ class PhysicalExerciseController extends Controller
         try {
             $physicalExercise->delete();
         } catch (\Throwable $exception) {
+            Log::channel('db_errors')->error('PhysicalExercise delete error', ['user' => Auth::user(), 'model' => $physicalExercise, 'exception' => $exception->getMessage()]);
             return response()->json([
                 'is_success' => false,
-                'error' => $exception->getMessage()
+                'errors' => ['internal error']
             ]);
         }
 

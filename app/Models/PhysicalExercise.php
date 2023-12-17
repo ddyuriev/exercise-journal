@@ -27,11 +27,11 @@ class PhysicalExercise extends Model
          */
         self::saving(function (PhysicalExercise $physicalExercise) {
             if (!empty($physicalExercise->moderated_by) && !empty($physicalExercise->status) && $physicalExercise->status == self::STATUS_IN_MODERATION) {
-                Log::channel('db_integrity_violation')->error('PhysicalExercise STATUS_IN_MODERATION collision', ['user' => Auth::user(), 'model' => $physicalExercise]);
+                Log::channel('db_errors')->error('PhysicalExercise STATUS_IN_MODERATION collision', ['user' => Auth::user(), 'model' => $physicalExercise]);
                 throw new \Exception('internal error');
             }
             if (empty($physicalExercise->moderated_by) && !empty($physicalExercise->status) && $physicalExercise->status == self::STATUS_APPROVED) {
-                Log::channel('db_integrity_violation')->error('PhysicalExercise STATUS_APPROVED collision', ['user' => Auth::user(), 'model' => $physicalExercise]);
+                Log::channel('db_errors')->error('PhysicalExercise STATUS_APPROVED collision', ['user' => Auth::user(), 'model' => $physicalExercise]);
                 throw new \Exception('internal error');
             }
         });

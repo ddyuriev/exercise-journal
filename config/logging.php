@@ -117,9 +117,9 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
-        'db_integrity_violation' => [
+        'db_errors' => [
             'driver' => 'single',
-            'path' => storage_path('logs/db_integrity_violation.log'),
+            'path' => storage_path('logs/db_errors.log'),
         ],
     ],
 

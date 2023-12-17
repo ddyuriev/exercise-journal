@@ -143,6 +143,11 @@ function settingsDeletePhysicalExercisesEL() {
                         settingsTogglePhysicalExercisesEL();
                         settingsDeletePhysicalExercisesEL();
                         window.history.pushState('', '', 'physical-exercises' + queryString);
+                        toastifyNotification('success', 'удалено');
+                    }
+                } else {
+                    for (const [key, val] of Object.entries(data.errors)) {
+                        toastifyNotification('error', val);
                     }
                 }
             });
