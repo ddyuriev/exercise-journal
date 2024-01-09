@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\StringHelper;
+use App\Http\Requests\IndexMainRequest;
 use App\Services\CalendarService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -20,19 +22,19 @@ class MainController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function index(Request $request)
+    public function index(IndexMainRequest $request)
     {
-        $request->validate([
-            'year-month' => 'date_format:Y-m',
-        ]);
-        $inputDate = $request->input('year-month');
+        $inputDate = $request->input('timespan');
         $date = $inputDate ? Carbon::parse($inputDate) : Carbon::now();
+
         return view('main.index', [
             'year' => $date->year,
             'month' => $date->format('m'),
-            'month_name' => $date->monthName,
+            'month_name' => mb_convert_case($date->monthName, MB_CASE_TITLE, "UTF-8"),
             'day' => $date->format('d'),
-            'calendar' => $this->calendarService->getCalendar($date)
+            'calendar' => $this->calendarService->getCalendar($date),
+            'month_range' => StringHelper::monthRange(),
+            'months_list' => StringHelper::monthsList()
         ]);
     }
 }

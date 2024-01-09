@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\PhysicalExercise;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 
 if (!function_exists('physicalExerciseIntToName')) {
     function physicalExerciseIntToName(int $status)
@@ -32,5 +34,12 @@ if (!function_exists('editablePhysicalExercises')) {
             PhysicalExercise::STATUS_PRIVATE,
             PhysicalExercise::STATUS_IN_MODERATION,
         ];
+    }
+}
+
+if (!function_exists('getMonthNameLoc')) {
+    function getMonthNameLoc($number)
+    {
+        return mb_convert_case(mb_substr(Carbon::now()->month($number)->locale(App::getLocale())->monthName, 0, 3), MB_CASE_TITLE, "UTF-8");
     }
 }

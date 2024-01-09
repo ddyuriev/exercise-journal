@@ -1,3 +1,4 @@
+import.meta.glob([ '../images/**', ]);
 import 'bootstrap';
 
 import $ from 'jquery';
@@ -24,7 +25,7 @@ if (Object.keys(textareasPET).length) {
 
 import Chart from 'chart.js/auto';
 
-import Toastify from 'toastify-js'
+import Toastify from 'toastify-js';
 
 //Добавление user_physical_exercises через select2
 $('#select-physical_exercise').on('select2:select', function (e) {
@@ -528,16 +529,6 @@ window.addEventListener('resize', () => {
     for (let wrapperItem of wrapper) {
         wrapperItem.update();
     }
-});
-
-//month picker
-let monthPickerInput = document.querySelector('.month-picker');
-
-monthPickerInput?.addEventListener('change', (event) => {
-    console.log(event.target.value);
-    console.log(window.location);
-
-    window.location.replace(window.location.origin + '?year-month=' + event.target.value);
 });
 
 //chart
