@@ -6,6 +6,7 @@ use App\Helpers\StringHelper;
 use App\Models\User;
 use App\Models\UserPhysicalExercise;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -37,24 +38,24 @@ class UserPhysicalExerciseService
      * @param int $periodIndex
      * @return array
      */
-    public function statistics(int $periodIndex) :array
+    public function statistics(int $periodIndex): array
     {
-        $now = Carbon::now();
+        $now = CarbonImmutable::now();
         $keysPeriod = [];
         $statistics = [];
 
         $startPeriod = match ($periodIndex) {
-            1 => $now->clone()->addDays(-6)->startOfDay(),
-            2 => $now->clone()->addDays(-13)->startOfDay(),
-            3 => $now->clone()->addMonthsNoOverflow(-1)->startOfDay(),
+            1 => $now->addDays(-6)->startOfDay(),
+            2 => $now->addDays(-13)->startOfDay(),
+            3 => $now->addMonthsNoOverflow(-1)->startOfDay(),
             //here with a margin, because the control points are rounded down, and the values may be missing.
-            4 => $now->clone()->addMonthsNoOverflow(-6)->addDays(-16)->startOfDay(),
-            5 => $now->clone()->addYears(-1)->startOfDay(),
+            4 => $now->addMonthsNoOverflow(-6)->addDays(-16)->startOfDay(),
+            5 => $now->addYears(-1)->startOfDay(),
         };
 
         $startRange = $now->diffInDays($startPeriod);
         foreach (range(-1 * $startRange, 0) as $number) {
-            $keysPeriod[$now->clone()->addDays($number)->toDateString()] = 0;
+            $keysPeriod[$now->addDays($number)->toDateString()] = 0;
         }
 
         //colors
@@ -68,7 +69,7 @@ class UserPhysicalExerciseService
                     $colorsArr[$physicalExerciseId] = StringHelper::randomColor();
                 }
             }
-            Cache::put('colors', $colorsArr, $now->clone()->addWeek());
+            Cache::put('colors', $colorsArr, $now->addWeek());
         }
 
         DB::statement("SET SQL_MODE=''");
@@ -111,27 +112,26 @@ class UserPhysicalExerciseService
         if ($periodIndex == 4) {
             $statisticsAux = [];
 
-            $monthBegin = $now->clone()->firstOfMonth();
+            $monthBegin = $now->firstOfMonth();
             //measure the middle of the month
-            $monthMiddle = $now->clone()->firstOfMonth()->addDays(14)->endOfDay();
+            $monthMiddle = $now->firstOfMonth()->addDays(14)->endOfDay();
 
             $keysPeriodHalfYear = [];
             for ($i = 0; $i <= 6; $i++) {
-                $dayKeyAux = $now->clone()->firstOfMonth();
+                $dayKeyAux = $now->firstOfMonth();
                 if ($now->between($monthBegin, $monthMiddle)) {
-                    $keysPeriodHalfYear[$dayKeyAux->clone()->addMonthsNoOverflow(-1 * $i)->firstOfMonth()->toDateString()] = 0;
-                    if ($i != 6) $keysPeriodHalfYear[$dayKeyAux->clone()->addMonthsNoOverflow(-1 * $i - 1)->addDays(14)->toDateString()] = 0;
+                    $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i)->firstOfMonth()->toDateString()] = 0;
+                    if ($i != 6) $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i - 1)->addDays(14)->toDateString()] = 0;
                 } else {
-                    $keysPeriodHalfYear[$dayKeyAux->clone()->addMonthsNoOverflow(-1 * $i)->addDays(14)->toDateString()] = 0;
-                    if ($i != 6) $keysPeriodHalfYear[$dayKeyAux->clone()->addMonthsNoOverflow(-1 * $i)->firstOfMonth()->toDateString()] = 0;
+                    $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i)->addDays(14)->toDateString()] = 0;
+                    if ($i != 6) $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i)->firstOfMonth()->toDateString()] = 0;
                 }
             }
-
             $keysPeriodHalfYear = array_reverse($keysPeriodHalfYear);
 
             foreach ($statistics as $statisticsKey => $statisticsItem) {
                 foreach ($keysPeriodHalfYear as $dayKeyStr => $value) {
-                    $dayKey = Carbon::parse($dayKeyStr);
+                    $dayKey = CarbonImmutable::parse($dayKeyStr);
                     $this->statisticsLoopAux($dayKey, $dayKeyStr, $statisticsKey, $statisticsItem, $statisticsAux);
                 }
             }
@@ -145,7 +145,7 @@ class UserPhysicalExerciseService
             $keysPeriodYear = [];
             foreach ($statistics as $statisticsKey => $statisticsItem) {
                 for ($i = 0; $i <= 12; $i++) {
-                    $dayKey = $now->clone()->addMonthsNoOverflow(-1 * $i);
+                    $dayKey = $now->addMonthsNoOverflow(-1 * $i);
                     $dayKeyStr = $dayKey->toDateString();
 
                     if (!array_key_exists($dayKeyStr, $keysPeriodYear)) {
@@ -167,27 +167,26 @@ class UserPhysicalExerciseService
 
 
     /**
-     * @param Carbon $dayKey
+     * @param CarbonImmutable $dayKey
      * @param string $dayKeyStr
      * @param string $statisticsKey
      * @param array $statisticsItem
      * @param array $statisticsAux
      */
-    private function statisticsLoopAux(Carbon $dayKey, string $dayKeyStr, string $statisticsKey, array $statisticsItem, array &$statisticsAux)
+    private function statisticsLoopAux(CarbonImmutable $dayKey, string $dayKeyStr, string $statisticsKey, array $statisticsItem, array &$statisticsAux)
     {
-        dd($statisticsAux);
         if (!empty($statisticsItem[$dayKeyStr])) {
             $statisticsAux[$statisticsKey][$dayKeyStr] = $statisticsItem[$dayKeyStr];
         } else {
             $nearValueSuccessFlag = false;
             for ($k = 1; $k <= 5; $k++) {
-                $dayKeyAux = $dayKey->clone()->addDays($k)->toDateString();
+                $dayKeyAux = $dayKey->addDays($k)->toDateString();
                 if (!empty($statisticsItem[$dayKeyAux])) {
                     $statisticsAux[$statisticsKey][$dayKeyStr] = $statisticsItem[$dayKeyAux];
                     $nearValueSuccessFlag = true;
                     break;
                 }
-                $dayKeyAux = $dayKey->clone()->addDays(-1 * $k)->toDateString();
+                $dayKeyAux = $dayKey->addDays(-1 * $k)->toDateString();
                 if (!empty($statisticsItem[$dayKeyAux])) {
                     $statisticsAux[$statisticsKey][$dayKeyStr] = $statisticsItem[$dayKeyAux];
                     $nearValueSuccessFlag = true;

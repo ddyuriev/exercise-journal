@@ -17,4 +17,3 @@ yarn-error.log
 /.idea
 /.vscode
 /app/Console/Commands/Private*.php
-/app/Helpers/DebugHelper.php
