@@ -14,9 +14,11 @@ class UserPhysicalExerciseService
 {
 
     /**
+     * @param Carbon $date
+     * @param int $page
      * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
-    public function getUserPhysicalExercises($date, $page)
+    public function getUserPhysicalExercises(Carbon $date, int $page)
     {
         $perPage = config('pagination.settings.per_page');
         $skip = ($page - 1) * $perPage;
@@ -32,16 +34,16 @@ class UserPhysicalExerciseService
     }
 
     /**
-     * @param $periodIndex
+     * @param int $periodIndex
      * @return array
      */
-    public function statistics($periodIndex)
+    public function statistics(int $periodIndex) :array
     {
         $now = Carbon::now();
         $keysPeriod = [];
         $statistics = [];
 
-        $startPeriod = match ((int)$periodIndex) {
+        $startPeriod = match ($periodIndex) {
             1 => $now->clone()->addDays(-6)->startOfDay(),
             2 => $now->clone()->addDays(-13)->startOfDay(),
             3 => $now->clone()->addMonthsNoOverflow(-1)->startOfDay(),
@@ -165,14 +167,15 @@ class UserPhysicalExerciseService
 
 
     /**
-     * @param $dayKey
-     * @param $dayKeyStr
-     * @param $statisticsKey
-     * @param $statisticsItem
-     * @param $statisticsAux
+     * @param Carbon $dayKey
+     * @param string $dayKeyStr
+     * @param string $statisticsKey
+     * @param array $statisticsItem
+     * @param array $statisticsAux
      */
-    private function statisticsLoopAux($dayKey, $dayKeyStr, $statisticsKey, $statisticsItem, &$statisticsAux)
+    private function statisticsLoopAux(Carbon $dayKey, string $dayKeyStr, string $statisticsKey, array $statisticsItem, array &$statisticsAux)
     {
+        dd($statisticsAux);
         if (!empty($statisticsItem[$dayKeyStr])) {
             $statisticsAux[$statisticsKey][$dayKeyStr] = $statisticsItem[$dayKeyStr];
         } else {

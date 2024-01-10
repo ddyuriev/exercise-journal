@@ -52,10 +52,10 @@ class PhysicalExerciseController extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function edit($id)
+    public function edit(int $id)
     {
         $physicalExercise = PhysicalExercise::find($id);
 
@@ -69,10 +69,10 @@ class PhysicalExerciseController extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function show($id)
+    public function show(int $id)
     {
         $physicalExercise = PhysicalExercise::find($id);
 
@@ -91,10 +91,10 @@ class PhysicalExerciseController extends Controller
 
     /**
      * @param UpdatePhysicalExerciseRequest $request
-     * @param $id
+     * @param int $id
      * @return JsonResponse
      */
-    public function update(UpdatePhysicalExerciseRequest $request, $id)
+    public function update(UpdatePhysicalExerciseRequest $request, int $id)
     {
         $requestData = $request->all();
 
@@ -123,7 +123,7 @@ class PhysicalExerciseController extends Controller
      * @param StorePhysicalExerciseRequest $request
      * @return JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function store(StorePhysicalExerciseRequest $request)
+    public function store(StorePhysicalExerciseRequest $request): JsonResponse
     {
         $requestData = $request->all();
 
@@ -157,10 +157,10 @@ class PhysicalExerciseController extends Controller
 
     /**
      * @param DestroyPhysicalExerciseRequest $request
-     * @param $id
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(DestroyPhysicalExerciseRequest $request, $id)
+    public function destroy(DestroyPhysicalExerciseRequest $request, int $id)
     {
         $data = $request->all();
 
@@ -211,7 +211,7 @@ class PhysicalExerciseController extends Controller
      * @param TogglePhysicalExerciseRequest $request
      * @return JsonResponse
      */
-    public function toggle(TogglePhysicalExerciseRequest $request)
+    public function toggle(TogglePhysicalExerciseRequest $request) : JsonResponse
     {
         $data = $request->all();
         $userPhysicalExercises = Auth::user()->physicalExercises()
@@ -239,7 +239,7 @@ class PhysicalExerciseController extends Controller
      * @param string $searchString
      * @return JsonResponse
      */
-    public function search(string $searchString)
+    public function search(string $searchString): JsonResponse
     {
         $searchString = str_replace('&', '%26', $searchString);
         parse_str($searchString, $data);

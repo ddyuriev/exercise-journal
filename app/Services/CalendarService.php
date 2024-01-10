@@ -11,10 +11,10 @@ class CalendarService
 {
 
     /**
-     * @param $date
+     * @param Carbon $date
      * @return array
      */
-    public function getCalendar($date): array
+    public function getCalendar(Carbon $date): array
     {
         $now = Carbon::now();
         $currentMonth = $date->month;
@@ -69,10 +69,10 @@ class CalendarService
 
 
     /**
-     * @param $date
+     * @param Carbon $date
      * @return int
      */
-    private function crossedWeeksCount($date): int
+    private function crossedWeeksCount(Carbon $date): int
     {
         $firstWeekOfMonthDate = $date->clone()->startOfMonth()->startOfWeek();
         $lastWeekOfMonthDate = $date->clone()->endOfMonth()->endOfWeek();

@@ -43,11 +43,11 @@ class UserPhysicalExerciseController extends Controller
     }
 
     /**
-     * @param $date
+     * @param string $date
      * @param Request $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function view($date, Request $request)
+    public function view(string $date, Request $request)
     {
         //the limit is due to the use of the list of items in select2 component
         $physicalExercises = PhysicalExercise::where('created_by', Auth::id())
@@ -115,11 +115,11 @@ class UserPhysicalExerciseController extends Controller
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @param UpdateUserPhysicalExerciseRequest $request
      * @return JsonResponse
      */
-    public function update($id, UpdateUserPhysicalExerciseRequest $request)
+    public function update(int $id, UpdateUserPhysicalExerciseRequest $request): JsonResponse
     {
         $data = $request->all();
 
@@ -150,7 +150,7 @@ class UserPhysicalExerciseController extends Controller
      * @param DestroyUserPhysicalExerciseRequest $request
      * @return JsonResponse
      */
-    public function destroy($id, DestroyUserPhysicalExerciseRequest $request)
+    public function destroy($id, DestroyUserPhysicalExerciseRequest $request): JsonResponse
     {
         $data = $request->all();
 
@@ -188,10 +188,10 @@ class UserPhysicalExerciseController extends Controller
 
 
     /**
-     * @param $date
+     * @param Carbon $date
      * @return int
      */
-    private function calculateNewIntradayKey($date): int
+    private function calculateNewIntradayKey(Carbon $date): int
     {
         $maxIntradayKey = UserPhysicalExercise::where('user_id', Auth::id())
             ->where('created_at', '>=', $date->startOfDay())
@@ -202,10 +202,10 @@ class UserPhysicalExerciseController extends Controller
     }
 
     /**
-     * @param $date
+     * @param Carbon $date
      * @return JsonResponse
      */
-    private function updateIntradayKeys($date): JsonResponse
+    private function updateIntradayKeys(Carbon $date): JsonResponse
     {
         $currentKeys = UserPhysicalExercise::where('user_id', Auth::id())
             ->where('created_at', '>=', $date->startOfDay())
