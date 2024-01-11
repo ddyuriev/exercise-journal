@@ -285,7 +285,7 @@ class PhysicalExerciseController extends Controller
 
         $physicalExercisesQuery = PhysicalExercise::select(DB::raw(
             "id,
-                    case created_by
+                    case
                         when status = $statusApproved then name
                         else private_name
                     end as name,

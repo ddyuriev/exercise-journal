@@ -59,8 +59,21 @@ class UserPhysicalExerciseController extends Controller
 
         $date = Carbon::parse($date);
 
+        $statusApproved = PhysicalExercise::STATUS_APPROVED;
+
         $userPhysicalExercises = UserPhysicalExercise
-            ::with('physical_exercises')
+            ::with(['physical_exercises' => function ($query) use ($statusApproved) {
+                $query->select(
+                    DB::raw(
+                        "id,
+                    case
+                        when status = $statusApproved then name
+                        else private_name
+                    end as name,
+                    description, status, created_by, created_at, updated_at"
+                    )
+                );
+            }])
             ->where('user_id', Auth::id())
             ->where('created_at', '>=', $date->startOfDay())
             ->where('created_at', '<=', $date->clone()->endOfDay())
