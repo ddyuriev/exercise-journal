@@ -89,7 +89,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function (event) {
             let monthsList = {!! json_encode($months_list) !!};
-            let monthNumber = 0;
+            let monthNumber = {!! json_encode($month) !!};
             let calendarComponent = document.getElementById('calendar-component');
             let jcalendarYearElem = document.getElementsByClassName('jcalendar-year')[0];
 
