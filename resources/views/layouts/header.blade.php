@@ -10,19 +10,17 @@
                         @if (request('device_type') == 'computer')
 
                             <div class="container-right p-4 mb-3">
-                                <div class="block-login">
-                                    <div class="row mt-0">
-                                        <div class="col main-navigation text-center">
-                                            <a class="nav-link text-center" href="{{route('main.index')}}">
-                                                <i class="bi bi-house-door"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         @endif
                     </div>
-                    <div class="col-9">
+                    <div class="col-9 padding-left-no">
+                        <div class="block-login">
+                            <div class="main-navigation text-start">
+                                <a href="{{route('main.index')}}" class="logo">
+                                    <img src="{{ Vite::asset('resources/images/logo_01.png') }}" alt="действие"/>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-2">
                         @if (request('device_type') == 'computer')
@@ -92,7 +90,9 @@
     @if(in_array(request('device_type'), ['phone', 'tablet']))
         <div class="header-mobile">
             <div class="container">
-                <a href="{{route('main.index')}}" class="logo">EJ</a>
+                <a href="{{route('main.index')}}" class="logo">
+                    <img src="{{ Vite::asset('resources/images/logo_08.png') }}" alt="действие"/>
+                </a>
 
                 <input class="side-menu" type="checkbox" id="side-menu"/>
                 <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
