@@ -40,6 +40,9 @@ if (!function_exists('editablePhysicalExercises')) {
 if (!function_exists('getMonthNameLoc')) {
     function getMonthNameLoc($number)
     {
+        /**
+         * @psalm-suppress InvalidPropertyFetch
+         */
         return mb_convert_case(mb_substr(Carbon::now()->month($number)->locale(App::getLocale())->monthName, 0, 3), MB_CASE_TITLE, "UTF-8");
     }
 }

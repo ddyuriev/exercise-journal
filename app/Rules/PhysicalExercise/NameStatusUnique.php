@@ -19,9 +19,9 @@ class NameStatusUnique implements Rule
     /**
      * NameStatusUnique constructor.
      * @param Request $request
-     * @param null $id
+     * @param string|null $id
      */
-    public function __construct(Request $request, $id = null)
+    public function __construct(Request $request, string|null $id = null)
     {
         $this->request = $request;
         $this->id = $id;
