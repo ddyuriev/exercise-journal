@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Statistics\StatisticsRequest;
-use App\Services\UserPhysicalExerciseService;
+use App\Services\StatisticsService;
 
 class StatisticsController extends Controller
 {
 
     /**
      * StatisticsController constructor.
-     * @param UserPhysicalExerciseService $userPhysicalExerciseService
+     * @param StatisticsService $statisticsService
      */
-    public function __construct(private UserPhysicalExerciseService $userPhysicalExerciseService)
+    public function __construct(private StatisticsService $statisticsService)
     {
     }
 
@@ -23,7 +23,7 @@ class StatisticsController extends Controller
      */
     public function index(StatisticsRequest $request)
     {
-        $statistics = $this->userPhysicalExerciseService->statistics($request->all()['period'] ?? 1);
+        $statistics = $this->statisticsService->statistics($request->all()['period'] ?? 1);
 
         $resultData = ['data' => $statistics];
 
