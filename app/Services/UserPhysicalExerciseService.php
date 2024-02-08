@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\PhysicalExercise;
 use App\Models\UserPhysicalExercise;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserPhysicalExerciseService
 {
@@ -12,21 +14,29 @@ class UserPhysicalExerciseService
     /**
      * @param Carbon $date
      * @param int $page
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function getUserPhysicalExercises(Carbon $date, int $page)
     {
         $perPage = config('pagination.settings.per_page');
-        $skip = ($page - 1) * $perPage;
 
+        $statusApproved = PhysicalExercise::STATUS_APPROVED;
         return UserPhysicalExercise
-            ::with('physical_exercises')
+            ::with(['physical_exercises' => function ($query) use ($statusApproved) {
+                $query->select(
+                    DB::raw(
+                        "id,
+                    case
+                        when status = $statusApproved then name
+                        else private_name
+                    end as name,
+                    description, status, created_by, created_at, updated_at"
+                    )
+                );
+            }])
             ->where('user_id', Auth::id())
             ->where('created_at', '>=', $date->startOfDay())
             ->where('created_at', '<=', $date->clone()->endOfDay())
-            ->skip($skip)
-            ->take($perPage)
-            ->get();
+            ->paginate($perPage, ['*'], 'page', $page);
     }
-
 }
