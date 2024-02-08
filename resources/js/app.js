@@ -252,7 +252,16 @@ physicalExercisesSettingsSearchInput?.addEventListener('keyup', (event) => {
                 settingsTogglePhysicalExercisesEL();
                 settingsDeletePhysicalExercisesEL();
                 window.history.pushState("Details", "Title", "physical-exercises?search_query=" + data.search.replace("&", '%26'));
-                document.querySelector('.common-pagination').innerHTML = data.pagination;
+                let commonPaginationElem = document.querySelector('.common-pagination');
+                if (commonPaginationElem === null) {
+                    let physicalExercisesSettings = document.getElementById("physical-exercises-settings");
+                    commonPaginationElem = document.createElement('nav');
+                    commonPaginationElem.classList.add("common-pagination");
+                    commonPaginationElem.innerHTML = data.pagination;
+                    physicalExercisesSettings.insertAdjacentElement('beforeend', commonPaginationElem);
+                } else {
+                    commonPaginationElem.innerHTML = data.pagination;
+                }
             }
         });
 
