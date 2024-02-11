@@ -49,8 +49,19 @@ class UserPhysicalExerciseController extends Controller
      */
     public function view(string $date, Request $request)
     {
+        $statusApproved = PhysicalExercise::STATUS_APPROVED;
         //the limit is due to the use of the list of items in select2 component
-        $physicalExercises = PhysicalExercise::where('created_by', Auth::id())
+        $physicalExercises = PhysicalExercise::select(
+            DB::raw(
+                "id,
+                    case
+                        when status = $statusApproved then name
+                        else private_name
+                    end as name,
+                    description, status, created_by, created_at, updated_at"
+            )
+        )
+            ->where('created_by', Auth::id())
             ->orWhere('status', PhysicalExercise::STATUS_APPROVED)
             ->take(env('USER_PHYSICAL_EXERCISES_LIMIT', 5000))
             ->pluck('name', 'id');
