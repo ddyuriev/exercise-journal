@@ -13,10 +13,10 @@ class UserPhysicalExerciseService
 
     /**
      * @param Carbon $date
-     * @param int $page
+     * @param int|null $page
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getUserPhysicalExercises(Carbon $date, int $page)
+    public function getUserPhysicalExercises(Carbon $date, ?int $page)
     {
         $perPage = config('pagination.settings.per_page');
 
