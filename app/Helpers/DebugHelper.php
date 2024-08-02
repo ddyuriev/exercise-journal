@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('printVariable')) {
-    function printVariable($variable, $alias, $addTime = true)
+    function printVariable(mixed $variable, string $alias, bool $addTime = true)
     {
         $time = time();
         $timeFormatted = $addTime ? date('g', $time) . '-' . date('i', $time) . '-' . date('s', $time) : '';

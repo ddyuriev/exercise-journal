@@ -12,11 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class StatisticsService
 {
-
-    /**
-     * @param int $periodIndex
-     * @return array
-     */
     public function statistics(int $periodIndex): array
     {
         $now = CarbonImmutable::now();
@@ -41,7 +36,7 @@ class StatisticsService
         $colorsArr = Cache::get('colors');
         $physicalExercises = User::with('physicalExercises')->where('id', Auth::id())->first()->physicalExercises()->pluck('name')->toArray();
 
-        if (!$colorsArr || is_array($colorsArr) && !empty(array_diff($physicalExercises, array_keys($colorsArr)))) {
+        if (!$colorsArr || is_array($colorsArr) && array_diff($physicalExercises, array_keys($colorsArr)) !== []) {
             $colorsArr = [];
             if ($physicalExercises) {
                 foreach ($physicalExercises as $physicalExerciseId) {
@@ -100,16 +95,20 @@ class StatisticsService
                 $dayKeyAux = $now->firstOfMonth();
                 if ($now->between($monthBegin, $monthMiddle)) {
                     $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i)->firstOfMonth()->toDateString()] = 0;
-                    if ($i != 6) $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i - 1)->addDays(14)->toDateString()] = 0;
+                    if ($i != 6) {
+                        $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i - 1)->addDays(14)->toDateString()] = 0;
+                    }
                 } else {
                     $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i)->addDays(14)->toDateString()] = 0;
-                    if ($i != 6) $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i)->firstOfMonth()->toDateString()] = 0;
+                    if ($i != 6) {
+                        $keysPeriodHalfYear[$dayKeyAux->addMonthsNoOverflow(-1 * $i)->firstOfMonth()->toDateString()] = 0;
+                    }
                 }
             }
             $keysPeriodHalfYear = array_reverse($keysPeriodHalfYear);
 
             foreach ($statistics as $statisticsKey => $statisticsItem) {
-                foreach ($keysPeriodHalfYear as $dayKeyStr => $value) {
+                foreach (array_keys($keysPeriodHalfYear) as $dayKeyStr) {
                     $dayKey = CarbonImmutable::parse($dayKeyStr);
                     $this->statisticsLoopAux($dayKey, $dayKeyStr, $statisticsKey, $statisticsItem, $statisticsAux);
                 }
@@ -144,15 +143,7 @@ class StatisticsService
         ];
     }
 
-
-    /**
-     * @param CarbonImmutable $dayKey
-     * @param string $dayKeyStr
-     * @param string $statisticsKey
-     * @param array $statisticsItem
-     * @param array $statisticsAux
-     */
-    private function statisticsLoopAux(CarbonImmutable $dayKey, string $dayKeyStr, string $statisticsKey, array $statisticsItem, array &$statisticsAux)
+    private function statisticsLoopAux(CarbonImmutable $dayKey, string $dayKeyStr, string $statisticsKey, array $statisticsItem, array &$statisticsAux): void
     {
         if (!empty($statisticsItem[$dayKeyStr])) {
             $statisticsAux[$statisticsKey][$dayKeyStr] = $statisticsItem[$dayKeyStr];
@@ -172,7 +163,9 @@ class StatisticsService
                     break;
                 }
             }
-            if (!$nearValueSuccessFlag) $statisticsAux[$statisticsKey][$dayKeyStr] = $statisticsItem[$dayKeyStr];
+            if (!$nearValueSuccessFlag) {
+                $statisticsAux[$statisticsKey][$dayKeyStr] = $statisticsItem[$dayKeyStr];
+            }
         }
     }
 }

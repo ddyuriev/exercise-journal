@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class CalendarService
 {
-
-    /**
-     * @param Carbon $date
-     * @return array
-     */
     public function getCalendar(Carbon $date): array
     {
         $now = Carbon::now();
@@ -24,13 +19,13 @@ class CalendarService
         $resultAux = [];
         for ($i = 0; $i <= ($weeksInMonth) * 7 - 1; $i++) {
             $beginDateAux = $beginDate->clone();
-            array_push($resultAux, [
+            $resultAux[] = [
                 'date' => $beginDateAux->addDays($i)->day,
                 'full_date' => $beginDate->clone()->addDays($i)->toDateString(),
                 'is_current_date' => $currentMonth === $beginDateAux->month && $day === $beginDateAux->day,
                 'month' => $beginDateAux->format('m'),
                 'is_this_month' => $currentMonth === $beginDateAux->month
-            ]);
+            ];
         }
 
         /**
@@ -61,21 +56,19 @@ class CalendarService
                 if ($keyDay === 6) {
                     $item['day'] = 'last_day';
                 }
-                if (!empty($exercises[$item['full_date']])) $item['exercises_count'] = $exercises[$item['full_date']];
+                if (!empty($exercises[$item['full_date']])) {
+                    $item['exercises_count'] = $exercises[$item['full_date']];
+                }
             }
         }
         return $result;
     }
 
-
-    /**
-     * @param Carbon $date
-     * @return int
-     */
     private function crossedWeeksCount(Carbon $date): int
     {
         $firstWeekOfMonthDate = $date->clone()->startOfMonth()->startOfWeek();
         $lastWeekOfMonthDate = $date->clone()->endOfMonth()->endOfWeek();
-        return intval(ceil($lastWeekOfMonthDate->diffInDays($firstWeekOfMonthDate) / 7));
+
+        return intval(ceil(ceil(abs($lastWeekOfMonthDate->diffInDays($firstWeekOfMonthDate)) / 7)));
     }
 }

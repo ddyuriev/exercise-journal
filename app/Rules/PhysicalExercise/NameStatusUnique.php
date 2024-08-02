@@ -13,14 +13,8 @@ class NameStatusUnique implements Rule
 
     private $message;
 
-    private $id;
+    private ?string $id;
 
-
-    /**
-     * NameStatusUnique constructor.
-     * @param Request $request
-     * @param string|null $id
-     */
     public function __construct(Request $request, string|null $id = null)
     {
         $this->request = $request;

@@ -7,16 +7,12 @@ use App\Models\UserPhysicalExercise;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserPhysicalExerciseService
 {
 
-    /**
-     * @param Carbon $date
-     * @param int|null $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function getUserPhysicalExercises(Carbon $date, ?int $page)
+    public function getUserPhysicalExercises(Carbon $date, ?int $page): LengthAwarePaginator
     {
         $perPage = config('pagination.settings.per_page');
 

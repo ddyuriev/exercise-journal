@@ -14,25 +14,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class UserPhysicalExerciseController extends Controller
 {
+    private Carbon $date;
 
-    /**
-     * @var Carbon
-     */
-    private $date;
+    private int $perPage;
 
-    /**
-     * @var \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
-     */
-    private $perPage;
-
-    /**
-     * UserPhysicalExerciseController constructor.
-     * @param Request $request
-     * @param UserPhysicalExerciseService $userPhysicalExerciseService
-     */
     public function __construct(Request $request, private UserPhysicalExerciseService $userPhysicalExerciseService)
     {
         $data = $request->all();
@@ -42,12 +31,7 @@ class UserPhysicalExerciseController extends Controller
         $this->perPage = config('pagination.settings.per_page');
     }
 
-    /**
-     * @param string $date
-     * @param Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
-    public function view(string $date, Request $request)
+    public function view(string $date, Request $request): View
     {
         $statusApproved = PhysicalExercise::STATUS_APPROVED;
         //the limit is due to the use of the list of items in select2 component
@@ -80,11 +64,7 @@ class UserPhysicalExerciseController extends Controller
         ]);
     }
 
-    /**
-     * @param StoreUserPhysicalExerciseRequest $request
-     * @return JsonResponse
-     */
-    public function store(StoreUserPhysicalExerciseRequest $request)
+    public function store(StoreUserPhysicalExerciseRequest $request): JsonResponse
     {
         $data = $request->all();
 
@@ -108,7 +88,7 @@ class UserPhysicalExerciseController extends Controller
         $queryStringParsedArr = StringHelper::httpQueryStringParser($data['queryString']);
         $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $queryStringParsedArr['page'])->items();
 
-        $isNeedReload = $itemsOldCount !== 0 && ceil($itemsOldCount / $this->perPage) != ceil(($itemsOldCount + 1) / $this->perPage);
+        $isNeedReload = $itemsOldCount !== 0 && ceil($itemsOldCount / $this->perPage) !== ceil(($itemsOldCount + 1) / $this->perPage);
         return response()->json([
             'is_success' => true,
             'is_need_reload' => $isNeedReload,
@@ -118,11 +98,6 @@ class UserPhysicalExerciseController extends Controller
 
     }
 
-    /**
-     * @param int $id
-     * @param UpdateUserPhysicalExerciseRequest $request
-     * @return JsonResponse
-     */
     public function update(int $id, UpdateUserPhysicalExerciseRequest $request): JsonResponse
     {
         $data = $request->all();
@@ -149,12 +124,7 @@ class UserPhysicalExerciseController extends Controller
 
     }
 
-    /**
-     * @param $id
-     * @param DestroyUserPhysicalExerciseRequest $request
-     * @return JsonResponse
-     */
-    public function destroy($id, DestroyUserPhysicalExerciseRequest $request): JsonResponse
+    public function destroy(int $id, DestroyUserPhysicalExerciseRequest $request): JsonResponse
     {
         $data = $request->all();
 
@@ -181,7 +151,7 @@ class UserPhysicalExerciseController extends Controller
         $queryStringParsedArr = StringHelper::httpQueryStringParser($data['queryString']);
         $userPhysicalExercises = $this->userPhysicalExerciseService->getUserPhysicalExercises($this->date, $queryStringParsedArr['page'])->items();
 
-        $isNeedReload = $itemsOldCount !== 1 && ceil($itemsOldCount / $this->perPage) != ceil(($itemsOldCount - 1) / $this->perPage);
+        $isNeedReload = $itemsOldCount !== 1 && ceil($itemsOldCount / $this->perPage) !== ceil(($itemsOldCount - 1) / $this->perPage);
         return response()->json([
             'is_success' => true,
             'is_need_reload' => $isNeedReload,
@@ -190,11 +160,6 @@ class UserPhysicalExerciseController extends Controller
         ]);
     }
 
-
-    /**
-     * @param Carbon $date
-     * @return int
-     */
     private function calculateNewIntradayKey(Carbon $date): int
     {
         $maxIntradayKey = UserPhysicalExercise::where('user_id', Auth::id())
@@ -205,10 +170,6 @@ class UserPhysicalExerciseController extends Controller
         return $maxIntradayKey ? $maxIntradayKey + 1 : 1;
     }
 
-    /**
-     * @param Carbon $date
-     * @return JsonResponse
-     */
     private function updateIntradayKeys(Carbon $date): JsonResponse
     {
         $currentKeys = UserPhysicalExercise::where('user_id', Auth::id())
@@ -248,9 +209,6 @@ class UserPhysicalExerciseController extends Controller
         ]);
     }
 
-    /**
-     * @return int
-     */
     private function getRemainder(): int
     {
         return UserPhysicalExercise

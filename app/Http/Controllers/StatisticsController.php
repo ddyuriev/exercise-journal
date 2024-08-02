@@ -4,24 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Statistics\StatisticsRequest;
 use App\Services\StatisticsService;
+use Illuminate\View\View;
 
 class StatisticsController extends Controller
 {
-
-    /**
-     * StatisticsController constructor.
-     * @param StatisticsService $statisticsService
-     */
     public function __construct(private StatisticsService $statisticsService)
     {
     }
 
-
-    /**
-     * @param StatisticsRequest $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
-     */
-    public function index(StatisticsRequest $request)
+    public function index(StatisticsRequest $request): View
     {
         $statistics = $this->statisticsService->statistics($request->all()['period'] ?? 1);
 

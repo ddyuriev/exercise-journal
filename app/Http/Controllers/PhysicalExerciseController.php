@@ -10,10 +10,12 @@ use App\Http\Requests\PhysicalExercises\UpdatePhysicalExerciseRequest;
 use App\Models\PhysicalExercise;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class PhysicalExerciseController extends Controller
 {
@@ -22,19 +24,13 @@ class PhysicalExerciseController extends Controller
      */
     private $perPage;
 
-    /**
-     * SettingsController constructor.
-     */
+
     public function __construct()
     {
         $this->perPage = config('pagination.settings.per_page');
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $data = $request->all();
 
@@ -43,18 +39,11 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
-    public function create()
+    public function create(): View
     {
         return view('physical_exercise.create');
     }
 
-    /**
-     * @param int $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
     public function edit(int $id)
     {
         $physicalExercise = PhysicalExercise::find($id);
@@ -68,11 +57,7 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
-    /**
-     * @param int $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
-    public function show(int $id)
+    public function show(int $id): View
     {
         $physicalExercise = PhysicalExercise::find($id);
 
@@ -89,12 +74,7 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
-    /**
-     * @param UpdatePhysicalExerciseRequest $request
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function update(UpdatePhysicalExerciseRequest $request, int $id)
+    public function update(UpdatePhysicalExerciseRequest $request, int $id): JsonResponse
     {
         $requestData = $request->all();
 
@@ -118,11 +98,6 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
-
-    /**
-     * @param StorePhysicalExerciseRequest $request
-     * @return JsonResponse|\Illuminate\Http\RedirectResponse
-     */
     public function store(StorePhysicalExerciseRequest $request): JsonResponse
     {
         $requestData = $request->all();
@@ -155,12 +130,7 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
-    /**
-     * @param DestroyPhysicalExerciseRequest $request
-     * @param int $id
-     * @return JsonResponse
-     */
-    public function destroy(DestroyPhysicalExerciseRequest $request, int $id)
+    public function destroy(DestroyPhysicalExerciseRequest $request, int $id): JsonResponse
     {
         $data = $request->all();
 
@@ -190,11 +160,11 @@ class PhysicalExerciseController extends Controller
         }
 
         $physicalExercises = $this->searchQuery($queryStringParsedArray, $queryStringParsedArray['page']);
-        $isNeedReload = $itemsOld->total() !== 0 && ceil($itemsOld->total() / $this->perPage) != ceil(($itemsOld->total() - 1) / $this->perPage);
+        $isNeedReload = $itemsOld->total() !== 0 && ceil($itemsOld->total() / $this->perPage) !== ceil(($itemsOld->total() - 1) / $this->perPage);
 
         $newQueryString = '';
         if ($isNeedReload && $queryStringParsedArray['page'] > 1) {
-            $queryStringParsedArray['page'] = $queryStringParsedArray['page'] - 1;
+            $queryStringParsedArray['page'] -=  1;
             $newQueryString = http_build_query($queryStringParsedArray);
         }
 
@@ -206,12 +176,7 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
-
-    /**
-     * @param TogglePhysicalExerciseRequest $request
-     * @return JsonResponse
-     */
-    public function toggle(TogglePhysicalExerciseRequest $request) : JsonResponse
+    public function toggle(TogglePhysicalExerciseRequest $request): JsonResponse
     {
         $data = $request->all();
         $userPhysicalExercises = Auth::user()->physicalExercises()
@@ -235,10 +200,6 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
-    /**
-     * @param string $searchString
-     * @return JsonResponse
-     */
     public function search(string $searchString): JsonResponse
     {
         $searchString = str_replace('&', '%26', $searchString);
@@ -272,12 +233,8 @@ class PhysicalExerciseController extends Controller
         ]);
     }
 
-    /**
-     * @param array $searchData
-     * @param int|null $pageNumber
-     * @return mixed
-     */
-    private function searchQuery(array $searchData, int $pageNumber = null)
+
+    private function searchQuery(array $searchData, int $pageNumber = null): LengthAwarePaginator
     {
         $user = Auth::user();
 
